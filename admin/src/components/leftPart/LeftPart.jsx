@@ -1,6 +1,15 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { getdata } from '../../axios/apicall';
 
 function LeftPart() {
+  function getcount(){
+    getdata('/docpatientcount').then((res)=>{
+      console.log(res);
+    })
+  }
+  useEffect(()=>{
+    getcount()
+  },[])
   return (
     <div className="col-span-2 min-h-[90vh] border-r border-feay-200 items-start justify-start flex flex-col w-full">
       <div className="w- items-start justify-start flex flex-col px-12 pt-12 pb-6">

@@ -34,12 +34,12 @@ const Login = () => {
         if(validatePhone(formData.phone))
         {postForm('/login',formData).then((res)=>{
           if (res.data.success) {
-            toast('login succesfull');
+            toast.success('login succesfull');
             dispatch(setUser(res.data.response))
             localStorage.setItem('token', res.data.token);
             navigate('/');
           } else {
-            toast(res.data.message);
+            toast.error(res.data.message);
           }
         })}
       }
@@ -87,7 +87,7 @@ const Login = () => {
           <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
             <div className="p-6 space-y-4 md:space-y-4">
               <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
-                Login to Your Accountt
+                Login to Your Account
               </h1>
               <form className="space-y-4 md:space-y-" onSubmit={handleSubmit}>
                 <label

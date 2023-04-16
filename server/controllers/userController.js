@@ -50,8 +50,11 @@ module.exports={
                 return res.status(200).send({message:`Invalid Email or Password`, success:false})
             }
             const token= jwt.sign({id:response._id},process.env.JWT_SECRET, {expiresIn: '1d'})
-            res.status(200).send({message:'Login Success', success:true,token,response})
-        // }).catch(()=>{
+            return res.status(200).send({message:`Login Succesful`, success:true,token,response})
+            
+            
+            
+            // }).catch(()=>{
         //     console.log('rejecxted');
         //     return res.status(200).send({message:'user not found',success:false})
           })

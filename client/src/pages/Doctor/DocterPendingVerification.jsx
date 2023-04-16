@@ -1,0 +1,48 @@
+import React from 'react';
+import { useSelector } from 'react-redux';
+import ReactTyped from 'react-typed';
+import { useNavigate } from 'react-router-dom';
+import Navbar from '../../components/navbar/navbar';
+
+function DocterPendingVerification() {
+  const navigate = useNavigate()
+const user = useSelector((state)=>state.user.user)
+if(user?.isVerified){
+  navigate('/')
+}
+if(!user?.isProfileComple){
+  navigate('/doctorForm')
+}
+  return (
+    <Navbar>
+      <div className="justify-center items-center flex md:h-[89vh] h-[92vh] bg-gray-100">
+        <div className="max-w-lg rounded overflow-hidden ">
+          {/* <div className='w'> */}
+          <img
+            src="/src/assets/verifypending.png"
+            className="mx-auto w-48"
+            alt="Sunset in the mountains"
+          />
+          {/* </div> */}
+          <div className="px-6 py-4">
+            <div className='mb-2'>
+              <h1 className="font-semibold text-blue-800 text-2xl mb-2 text-center">Your account is being verified</h1>
+              <ReactTyped className='text-left ml-5 text-md font-semibold' strings={["Verification in progress. Thank you for your patience.","Almost there! We're verifying your account now.","We're processing your account. Please stand by."]}  typeSpeed={10} backSpeed={50} loop/>
+            </div>
+            <p className="text-gray-400 text-sm text-center">
+              {`Your account's is currently undergoing verification by our team. The
+              purpose of this verification process is likely to confirm
+              your identity, qualifications, or other relevant information
+              to ensure that they meet the necessary standards or requirements
+              for the professional role. Once the verification is complete,
+              you should be able to access the relevant systems or
+              services associated with your account.`}
+            </p>
+          </div>
+        </div>
+      </div>
+    </Navbar>
+  );
+}
+
+export default DocterPendingVerification;

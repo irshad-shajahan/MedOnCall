@@ -31,9 +31,9 @@ const navElements = [
   },
   {
     id: 2,
-    title: 'Market',
+    title: 'Doctors',
     icon: <ShoppingCartIcon className="w-6 h-6 cursor-pointer" />,
-    route: '/',
+    route: '/doctorpanel',
   },
   {
     id: 3,
@@ -45,15 +45,15 @@ const navElements = [
     id: 4,
     title: 'Settings',
     icon: <CogIcon className="w-6 h-6 cursor-pointer" />,
-    route: '/'
-  }
+    route: '/',
+  },
 ];
 
 function NavBar() {
-  const navigate = useNavigate()
-  function logout(){
-    localStorage.clear()
-    navigate('/login')
+  const navigate = useNavigate();
+  function logout() {
+    localStorage.clear();
+    navigate('/login');
   }
   return (
     <nav className="col-span-2 border-r border-gray-200 min-h-[90vh] w-[80px] xl:w-[225px] pt-8 px-1 flex flex-col items-start justify-between">
@@ -65,15 +65,18 @@ function NavBar() {
         {navElements.slice(4, 6).map((link) => (
           <NavItem link={link} key={link.id} />
         ))}
-      <div
-        className="w-full flex items-center justify-start space-x-8 px-5 cursor-pointer
+        <div
+          className="w-full flex items-center justify-start space-x-8 px-5 cursor-pointer
        group"
-      onClick={logout} >
-        <span>
-          <LogoutIcon className="w-6 h-6 cursor-pointer" />
-        </span>
-        <h1 className='text-gray-600 group-hover:text-black xl:flex hidden'>LogOut</h1>
-      </div>
+          onClick={logout}
+        >
+          <span>
+            <LogoutIcon className="w-6 h-6 cursor-pointer" />
+          </span>
+          <h1 className="text-gray-600 group-hover:text-black xl:flex hidden">
+            LogOut
+          </h1>
+        </div>
       </div>
     </nav>
   );

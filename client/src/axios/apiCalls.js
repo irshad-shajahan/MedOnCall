@@ -1,6 +1,7 @@
 /* eslint-disable import/prefer-default-export */
 import axios from './axios';
 
+
 export function postForm(route,data){
        return axios.post(route,data,{
         headers: { "Content-Type": "application/json" },
@@ -14,4 +15,12 @@ export function docPost(route,data){
       headers: { "Content-Type": "application/json" },
       withCredentials: true,
     })
-} 
+}
+
+export function imageForm(route,data){
+  return axios.post(`/doctor${route}`,data,{
+   headers: {"Content-Type": "multipart/form-data",},
+  // headers: { "Content-Type": "application/json" },
+   withCredentials: true,
+ })
+}

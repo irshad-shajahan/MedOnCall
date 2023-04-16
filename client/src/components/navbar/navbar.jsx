@@ -13,6 +13,9 @@ function Navbar({ children }) {
     { name: 'Medicines', link: '/' },
     { name: user?.name.toUpperCase().split(" ")[0], link: '/' },
   ];
+  if(user?.isDoctor){
+    links[0].name='Consult Patients'
+  }
   const [open, SetOpen] = useState(false);
   const logout=()=>{
     localStorage.removeItem('token')
@@ -40,9 +43,10 @@ function Navbar({ children }) {
                 }`}
               >
                 {links.map((link) => (
-                  <li className="md:ml-8 font-bold md:my-0 my-7 ">
-                    <a
-                      href="{link.link}"
+                  <li className="md:ml-8 font-bold md:my-0 my-7 "key={link.name}>
+                    
+                    <a 
+                      href={link.link}
                       className="text-white hover:text-purple-400 duration-500"
                     >
                       {link.name}
