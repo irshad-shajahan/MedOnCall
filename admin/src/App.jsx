@@ -7,6 +7,9 @@ import 'react-toastify/dist/ReactToastify.css';
 import ProtectedRoute from './components/RouteProtection/protectedRoute';
 import PublicRoute from './components/RouteProtection/publicRoute';
 import UserPanel from './pages/UserPanel';
+import DoctorPanel from './pages/DoctorPanel';
+import DoctorDetails from './pages/DoctorDetails';
+import Manage from './pages/Manage';
 
 const App = () => {
   return (
@@ -36,8 +39,42 @@ const App = () => {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/doctorpanel"
+          element={
+            <ProtectedRoute>
+              <DoctorPanel />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/doctordetails"
+          element={
+            <ProtectedRoute>
+              <DoctorDetails/>
+            </ProtectedRoute>
+          }
+        /><Route
+        path="/manage"
+        element={
+          <ProtectedRoute>
+            <Manage/>
+          </ProtectedRoute>
+        }
+      />
       </Routes>
-      <ToastContainer />
+      <ToastContainer
+        position="top-center"
+        autoClose={2000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
     </BrowserRouter>
   );
 };

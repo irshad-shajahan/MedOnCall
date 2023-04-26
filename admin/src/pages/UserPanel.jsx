@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component';
 import Header from '../components/header/Header';
 import NavBar from '../components/navbar/NavBar';
-import axios from '../axios/axios';
+import { getdata } from '../axios/apicall';
 
 function UserPanel() {
   const [userData, SetData] = useState([]);
@@ -16,10 +16,7 @@ function UserPanel() {
   ];
   const getUserData = async () => {
     try {
-      const res = await axios.get('/userpanel', {
-        headers: { 'Content-Type': 'application/json' },
-        withCredentials: true,
-      });
+      const res = await getdata('/userpanel')
       if (res.data.success) {
         SetData(res.data.users);
       }

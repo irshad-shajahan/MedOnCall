@@ -2,21 +2,21 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState } from 'react';
-// import {useDispatch} from 'react-redux'
-// import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { signInWithPopup } from 'firebase/auth';
 import { useDispatch } from 'react-redux';
-import { auth,provider } from '../firebaseConfigFile';
-import { postForm } from '../axios/apiCalls';
+import { auth, provider } from '../firebaseConfigFile';
 import { validatePhone } from '../components/validations';
+import { useUserGoogleLoginMutation, useUserLoginMutation } from '../redux/features/api/apiSlice';
+import { hideLoading, showloading } from '../redux/features/alertSlice';
 import { setUser } from '../redux/features/userSlice';
 
-
 const Login = () => {
-  const navigate = useNavigate();
   const dispatch = useDispatch()
+  const [verifyLogin, { isLoading }] = useUserLoginMutation();
+  const [verifyGoogleLogin] = useUserGoogleLoginMutation();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({});
   function handleChange(event) {
     const { name, value } = event.target;
@@ -27,48 +27,56 @@ const Login = () => {
     try {
       if (!formData.phone || !formData.password) {
         toast('Please fill in the credentials');
-      }else{
-        if(!validatePhone(formData.phone)){
-          toast('enter valid phone')
+      } else {
+        if (!validatePhone(formData.phone)) {
+          toast('enter valid phone');
         }
-        if(validatePhone(formData.phone))
-        {postForm('/login',formData).then((res)=>{
-          if (res.data.success) {
-            toast('login succesfull');
-            dispatch(setUser(res.data.response))
-            localStorage.setItem('token', res.data.token);
-            navigate('/');
-          } else {
-            toast(res.data.message);
-          }
-        })}
+        if (validatePhone(formData.phone) && !isLoading) {
+          dispatch(showloading())
+          verifyLogin(formData).then((res) => {
+            if (res.data.success) {
+              localStorage.setItem('token', res.data.token);
+              dispatch(setUser(res.data.response))
+              dispatch(hideLoading())
+              if(res.data.response.isDoctor){
+               navigate('/doctor')
+              }else{
+                navigate('/')
+              }
+            } else {
+              toast.error(res.data.message);
+              dispatch(hideLoading())
+            }
+          })
+        }
       }
     } catch (error) {
       // eslint-disable-next-line no-console
       console.log(error);
     }
   }
-  const googleSignin = ()=>{
-    signInWithPopup(auth,provider).then((data)=>{
-      const userData={
-        name:data.user.displayName,
-        email:data.user.email,
-        profilePhoto:data.user.photoURL
-      }
-      if(data.user.emailVerified){
-        postForm('/googleRegister',userData).then((res)=>{
+  const googleSignin = () => {
+    signInWithPopup(auth, provider).then((data) => {
+      const userData = {
+        name: data.user.displayName,
+        email: data.user.email,
+        profilePhoto: data.user.photoURL,
+      };
+      if (data.user.emailVerified) {
+        // postForm('/googleRegister', userData).then((res) => {
+          verifyGoogleLogin(userData).then((res)=>{
           if (res.data.success) {
             toast('login succesfull');
             localStorage.setItem('token', res.data.token);
+            localStorage.setItem('doctor',true);
             navigate('/');
           } else {
             toast(res.data.message);
           }
-        })
+        });
       }
-    })
-  }
-
+    });
+  };
 
   return (
     <div>
@@ -87,7 +95,7 @@ const Login = () => {
           <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
             <div className="p-6 space-y-4 md:space-y-4">
               <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
-                Login to Your Accountt
+                Login to Your Account
               </h1>
               <form className="space-y-4 md:space-y-" onSubmit={handleSubmit}>
                 <label
@@ -145,7 +153,8 @@ const Login = () => {
                   <button
                     type="button"
                     className="text-2xl bg-red-600 mt-1 rounded-lg"
-                  onClick={googleSignin}>
+                    onClick={googleSignin}
+                  >
                     <ion-icon name="logo-google" />
                   </button>
                 </div>

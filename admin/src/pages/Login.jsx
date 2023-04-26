@@ -25,11 +25,11 @@ const Login = () => {
       withCredentials: true,
     })
     if(res.data.success){
-      toast("login succesfull")
+      toast.success("login succesfull")
       localStorage.setItem("token",res.data.token)
       navigate('/')
     }else{
-      toast(res.data.message)
+      toast.error(res.data.message)
     }
   }catch(error){
     // eslint-disable-next-line no-console

@@ -1,10 +1,15 @@
 import React from 'react'
+import { useDispatch } from 'react-redux';
 import Header from '../components/header/Header';
 import LeftPart from '../components/leftPart/LeftPart';
 import RightPart from '../components/righPart/RightPart';
 import NavBar from '../components/navbar/NavBar';
+import { changeNav } from '../redux/features/activeNav';
 
 function HomePage() {
+
+const dispatch= useDispatch()
+dispatch(changeNav({actNav: 0,}));
   return (
     <div>
         <Header />

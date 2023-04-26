@@ -21,12 +21,22 @@ const doctorSchema = new mongoose.Schema({
   },
   isDoctor:{
     type:Boolean,    
-}
-,additionalDetails:{
+},
+Duty:Boolean
+,isProfileComplete:{
   type:Boolean,
   default:false
 },
-verified:{
+additionalDetails:{
+  profileImage:String,
+  speciality:String,
+  qualification:String,
+  council:String,
+  Fee:Number,
+  regNumber:Number,
+  regYear:Number
+},
+isVerified:{
   type:Boolean,
   default:false
 }

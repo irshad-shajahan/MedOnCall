@@ -33,16 +33,16 @@ function Register() {
     event.preventDefault();
     try {
       if (!formData.phone || !formData.name || !formData.password) {
-        toast('Please fill in the credentials');
+        toast.error('Please fill in the credentials');
       } else {
         if (!isValidName(formData.name)) {
-          toast('Enter a valid name');
+          toast.warn('Enter a valid name');
         }
         if (!validatePhone(formData.phone)) {
-          toast('Enter valid phone number');
+          toast.warn('Enter valid phone number');
         }
         if (validatePassword(formData.password)) {
-          toast(validatePassword(formData.password));
+          toast.warn(validatePassword(formData.password));
         }
         if (
           isValidName(formData.name) &&
@@ -57,17 +57,17 @@ function Register() {
             if(doctorCheck){
               if(existDoc.data.success){
                 if(!existUser.data.success){
-                  toast('The entered number is already registered as a user')
+                  toast.error('The entered number is already registered as a user')
                 }
               }else{
                 toast(existDoc.data.message)
               }
             }else if(existUser.data.success){
                   if(!existDoc.data.success){
-                    toast('The entered number is already registered as a doctor')
+                    toast.error('The entered number is already registered as a doctor')
                   }
                 }else{
-                  toast(existUser.data.message)
+                  toast.success(existUser.data.message)
                 }
               if(existDoc.data.success && existUser.data.success){
                 onSignInSubmit(formData.code, formData.phone).then(() => {
