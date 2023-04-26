@@ -1,18 +1,16 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
 import ReactTyped from 'react-typed';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../../components/navbar/navbar';
+import { useGetUserDetailsQuery } from '../../redux/features/api/apiSlice';
 
 function DocterPendingVerification() {
-  const navigate = useNavigate()
-const user = useSelector((state)=>state.user.user)
-if(user?.isVerified){
-  navigate('/')
-}
-if(!user?.isProfileComple){
-  navigate('/doctorForm')
-}
+  const navigate = useNavigate();
+  const { data } = useGetUserDetailsQuery();
+  const user = data?.data;
+  if (user?.isVerified) {
+    navigate('/doctor');
+  }
   return (
     <Navbar>
       <div className="justify-center items-center flex md:h-[89vh] h-[92vh] bg-gray-100">
@@ -25,9 +23,21 @@ if(!user?.isProfileComple){
           />
           {/* </div> */}
           <div className="px-6 py-4">
-            <div className='mb-2'>
-              <h1 className="font-semibold text-blue-800 text-2xl mb-2 text-center">Your account is being verified</h1>
-              <ReactTyped className='text-left ml-5 text-md font-semibold' strings={["Verification in progress. Thank you for your patience.","Almost there! We're verifying your account now.","We're processing your account. Please stand by."]}  typeSpeed={10} backSpeed={50} loop/>
+            <div className="mb-2">
+              <h1 className="font-semibold text-blue-800 text-2xl mb-2 text-center">
+                Your account is being verified
+              </h1>
+              <ReactTyped
+                className="text-left ml-5 text-md font-semibold"
+                strings={[
+                  'Verification in progress. Thank you for your patience.',
+                  "Almost there! We're verifying your account now.",
+                  "We're processing your account. Please stand by.",
+                ]}
+                typeSpeed={10}
+                backSpeed={50}
+                loop
+              />
             </div>
             <p className="text-gray-400 text-sm text-center">
               {`Your account's is currently undergoing verification by our team. The

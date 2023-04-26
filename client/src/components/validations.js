@@ -10,10 +10,11 @@ export const isValidName=(name)=> {
   const regex = /^[a-zA-Z\s'-]+$/;
   return regex.test(name);
 }
-export const isValidText=(text)=>{
-  const lettersRegex = /^[a-zA-Z]{6,}$/;
-  return lettersRegex.test(text)
+export const isValidText = (text) => {
+  const lettersRegex = /^[a-zA-Z\s]{4,}$/;
+  return lettersRegex.test(text);
 }
+
 
 export const isValidEmail=(email)=> {
   const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

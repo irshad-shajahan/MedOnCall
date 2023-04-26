@@ -1,6 +1,5 @@
-/* eslint-disable no-nested-ternary */
 import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import { useSelector } from 'react-redux';
 import HomePage from './pages/Patient/HomePage';
@@ -14,35 +13,24 @@ import OtpInput from './pages/otpSubmit';
 import DoctorForm from './pages/Doctor/DoctorForm';
 import Spinner from './components/features/spinner';
 import DocterPendingVerification from './pages/Doctor/DocterPendingVerification';
-import DocHome from './pages/Doctor/DocHome';
+import DoctorRouter from './routes/doctorRouter';
+import UserRouter from './routes/userRouter';
 
 function App() {
   const isLoading = useSelector((state) => state.alerts.loading);
-  const user = useSelector((state) => state.user.user);
-
-  const isDoctor = user?.isDoctor;
-  const isProfileComplete = user?.isProfileComplete;
-  const isVerified = user?.isVerified;
+  const Doctor = useSelector((state) => state.user.user);
+  const isDoctor = Doctor?.isDoctor;
   return (
     <BrowserRouter>
       {isLoading && <Spinner />}
-
       <Routes>
         <Route
           path="/"
           element={
             isDoctor ? (
-              isProfileComplete ? (
-                isVerified ? (
-                  <ProtectedRoute>
-                    <DocHome />
-                  </ProtectedRoute>
-                ) : (
-                  <Navigate to="/pendingVerification" />
-                )
-              ) : (
-                <Navigate to="/doctorForm" />
-              )
+              <ProtectedRoute>
+                <DoctorRouter />
+              </ProtectedRoute>
             ) : (
               <ProtectedRoute>
                 <HomePage />
@@ -83,6 +71,14 @@ function App() {
           }
         />
         <Route
+          path="/doctor/*"
+          element={
+            <ProtectedRoute>
+              <DoctorRouter />
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/pendingVerification"
           element={
             <ProtectedRoute>
@@ -90,10 +86,19 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/user/*"
+          element={
+            <ProtectedRoute>
+              <UserRouter />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
       <ToastContainer
         position="top-center"
         autoClose={2000}
+        limit={3}
         hideProgressBar={false}
         newestOnTop={false}
         closeOnClick

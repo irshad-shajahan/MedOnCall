@@ -37,9 +37,9 @@ const navElements = [
   },
   {
     id: 3,
-    title: 'News',
+    title: 'Manage',
     icon: <ChatAltIcon className="w-6 h-6 cursor-pointer" />,
-    route: '/',
+    route: '/manage',
   },
   {
     id: 4,

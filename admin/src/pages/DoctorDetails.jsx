@@ -64,7 +64,7 @@ function DoctorDetails() {
                   onClick={() => verify(false)}
                   className="bg-green-300 px-4 py-1 onclick font-bold text-white w-28 rounded-md float-right"
                 >
-                  Verified
+                  Approved
                 </button>
               ) : (
                 <button
@@ -72,7 +72,7 @@ function DoctorDetails() {
                   onClick={() => verify(true)}
                   className="bg-red-400 w-28 py-1 font-bold text-white rounded-md float-right"
                 >
-                  Verify
+                  Approve
                 </button>
               )}
 
@@ -138,11 +138,11 @@ function DoctorDetails() {
                   </tr>
                   <tr>
                     <td className="px-6 py-4 whitespace-nowrap text-blue-900 font-bold text-base">
-                      Previous Hospital
+                      Consultation Fee
                     </td>
                     <td className="font-bold text-xl">:</td>
                     <td className="px-6 py-4 whitespace-nowrap text-base font-semibold">
-                      {details?.additionalDetails?.hospital}{' '}
+                      $ {details?.additionalDetails?.Fee}{'/- '}
                     </td>
                   </tr>
                   <tr>

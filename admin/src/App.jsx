@@ -9,6 +9,7 @@ import PublicRoute from './components/RouteProtection/publicRoute';
 import UserPanel from './pages/UserPanel';
 import DoctorPanel from './pages/DoctorPanel';
 import DoctorDetails from './pages/DoctorDetails';
+import Manage from './pages/Manage';
 
 const App = () => {
   return (
@@ -53,7 +54,14 @@ const App = () => {
               <DoctorDetails/>
             </ProtectedRoute>
           }
-        />
+        /><Route
+        path="/manage"
+        element={
+          <ProtectedRoute>
+            <Manage/>
+          </ProtectedRoute>
+        }
+      />
       </Routes>
       <ToastContainer
         position="top-center"

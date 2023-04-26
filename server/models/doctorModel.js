@@ -21,7 +21,8 @@ const doctorSchema = new mongoose.Schema({
   },
   isDoctor:{
     type:Boolean,    
-}
+},
+Duty:Boolean
 ,isProfileComplete:{
   type:Boolean,
   default:false
@@ -31,7 +32,7 @@ additionalDetails:{
   speciality:String,
   qualification:String,
   council:String,
-  hospital:String,
+  Fee:Number,
   regNumber:Number,
   regYear:Number
 },

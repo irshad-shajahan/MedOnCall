@@ -1,5 +1,7 @@
 const doctorModel = require("../models/doctorModel");
+const specialityModel = require("../models/specialityModel")
 const upload = require("../multer");
+const axios = require('axios')
 module.exports = {
   verifyExist: async (req, res) => {
     const { phone } = req.body;
@@ -15,14 +17,8 @@ module.exports = {
 
   doctorProfileComplete: async (req, res) => {
     try {
-      const {
-        speciality,
-        qualification,
-        council,
-        hospital,
-        regNumber,
-        regYear,
-      } = req.body;
+      const { speciality, qualification, council, Fee, regNumber, regYear } =
+        req.body;
       const doctor = await doctorModel.findOne({ phone: req.params.id });
       if (!doctor) {
         return res.status(404).send("Doctor not found");
@@ -33,7 +29,7 @@ module.exports = {
         speciality,
         qualification,
         council,
-        hospital,
+        Fee,
         regNumber,
         regYear,
       };
@@ -45,4 +41,48 @@ module.exports = {
       res.status(500).send({ message: "Details not Updated", success: false });
     }
   },
+  dutyToggle: async (req, res) => {
+    console.log(req.body.userId);
+    try {
+      const doctor = await doctorModel.findById(req.body.userId);
+      console.log(doctor);
+      if (doctor.Duty) {
+        doctor.Duty = false;
+      } else {
+        doctor.Duty = true;
+      }
+      doctor.save();
+      res.status(200).send({ message: "updated succesfully,", success: true });
+    } catch (err) {
+      res.status(500).send({ message: "error occured", success: false });
+    }
+  },
+  checkDoc: async (req, res) => {
+    try {
+      const doctor = await doctorModel.findById(req.body.userId);
+     console.log(doctor);
+      if (doctor) {
+        const doc = {
+          isDoctor: doctor.isDoctor,
+          isVerified: doctor.isVerified,
+          isProfileComplete: doctor.isProfileComplete,
+          isDuty:doctor.Duty
+        };
+        res.status(200).send({ success: true, doc: doc });
+      } else {
+        res.status(200).send({ message: "not a doctor", success: false });
+      }
+    } catch (error) {
+      console.log(error);
+      res.status(500).send({ message: "error occured", success: false });
+    }
+  },
+  fetchSpeciality:async(req,res)=>{
+    try{
+      const specialities = await specialityModel.find()
+      res.status(200).send({message:'fetch successful',success:true,specialities})
+    }catch(error){
+      res.status(500).send({message:'Error occurred while fetching speciality'+error,success:false})
+    }
+  }
 };

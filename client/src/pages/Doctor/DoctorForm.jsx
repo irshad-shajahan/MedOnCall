@@ -1,23 +1,28 @@
 /* eslint-disable guard-for-in */
 /* eslint-disable jsx-a11y/label-has-associated-control */
 /* eslint-disable react/no-unescaped-entities */
-import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, {  useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Navbar from '../../components/navbar/navbar';
 import { imageForm } from '../../axios/apiCalls';
 import { hideLoading, showloading } from '../../redux/features/alertSlice';
 import { isValidRegNumber, isValidText } from '../../components/validations';
+import { useDocCheckQuery } from '../../redux/features/api/apiSlice';
 
 function DoctorForm() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.user.user);
+  const {data,isSuccess} = useDocCheckQuery()
+  const user = data?.doc
+if(isSuccess){
+if(user?.isProfileComplete){
+    navigate('/doctor')
+  }
+}
   const [valid, setValid] = useState(false);
-  // if(user?.isProfileComplete){
-  //   navigate('/pendingVerification')
-  // }
+ 
   const [formData, setFormData] = useState({});
   const [img, setimg] = useState('');
   const [err, setErr] = useState({
@@ -39,7 +44,7 @@ function DoctorForm() {
         !formData.speciality ||
         !formData.qualification ||
         !formData.council ||
-        !formData.hospital ||
+        !formData.Fee ||
         !formData.regYear ||
         !formData.regNumber ||
         !img
@@ -90,13 +95,15 @@ function DoctorForm() {
 
         if (valid) {
           dispatch(showloading());
-          const data = new FormData();
+          const datas = new FormData();
           // eslint-disable-next-line no-restricted-syntax
           for (const key in formData) {
-            data.append(key, formData[key]);
+            datas.append(key, formData[key]);
           }
-          data.append('image', img);
-          imageForm(`/profilecomplete/${user.phone}`, data).then(() => {
+          datas.append('image', img);
+          console.log(datas);
+          imageForm(`/profilecomplete/${user.phone}`, datas).then((res) => {
+            console.log(res);
             dispatch(hideLoading());
             navigate('/pendingVerification');
           });
@@ -108,6 +115,7 @@ function DoctorForm() {
       dispatch(hideLoading());
     }
   }
+
   return (
     <div>
       <Navbar>
@@ -128,7 +136,7 @@ function DoctorForm() {
                   </label>
                   <input
                     name="speciality"
-                    className="inline-flex w-80 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg border-2 "
+                    className="inline-flex w-80 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg border-2"
                     onChange={handleChange}
                   />
                   <span className="block text-red-500 font-semibold">
@@ -165,10 +173,10 @@ function DoctorForm() {
               <div className="flex  flex-col">
                 <div className="mt-6">
                   <label className="block font-semibold mb-2 ml-1">
-                    Previous/Current Hospital
+                    Fee Per Consultation
                   </label>
                   <input
-                    name="hospital"
+                    name="Fee"
                     className="inline-flex w-80 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg border-2 "
                     onChange={handleChange}
                   />
