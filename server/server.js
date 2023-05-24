@@ -7,6 +7,7 @@ const connectDB = require('./config/dB');
 const userRouter = require("./routes/userRoutes")
 const adminRouter = require("./routes/adminRoutes")
 const doctorRouter = require('./routes/doctorRoutes')
+const comRouter = require('./routes/communicationRoutes')
 //dotenv config
 dotenv.config()
 
@@ -30,6 +31,7 @@ app.use(morgan('dev'))
 app.use("/",userRouter)
 app.use("/admin",adminRouter)
 app.use("/doctor",doctorRouter)
+app.use("/com",comRouter)
 
 //port
 const port = process.env.PORT || 8080

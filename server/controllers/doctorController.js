@@ -1,7 +1,7 @@
 const doctorModel = require("../models/doctorModel");
-const specialityModel = require("../models/specialityModel")
+const specialityModel = require("../models/specialityModel");
 const upload = require("../multer");
-const axios = require('axios')
+const axios = require("axios");
 module.exports = {
   verifyExist: async (req, res) => {
     const { phone } = req.body;
@@ -42,10 +42,8 @@ module.exports = {
     }
   },
   dutyToggle: async (req, res) => {
-    console.log(req.body.userId);
     try {
       const doctor = await doctorModel.findById(req.body.userId);
-      console.log(doctor);
       if (doctor.Duty) {
         doctor.Duty = false;
       } else {
@@ -60,29 +58,131 @@ module.exports = {
   checkDoc: async (req, res) => {
     try {
       const doctor = await doctorModel.findById(req.body.userId);
-     console.log(doctor);
       if (doctor) {
         const doc = {
           isDoctor: doctor.isDoctor,
           isVerified: doctor.isVerified,
           isProfileComplete: doctor.isProfileComplete,
-          isDuty:doctor.Duty
+          isDuty: doctor.Duty,
         };
         res.status(200).send({ success: true, doc: doc });
       } else {
         res.status(200).send({ message: "not a doctor", success: false });
       }
     } catch (error) {
-      console.log(error);
       res.status(500).send({ message: "error occured", success: false });
     }
   },
-  fetchSpeciality:async(req,res)=>{
+  fetchSpeciality: async (req, res) => {
+    try {
+      const specialities = await specialityModel.find();
+      res
+        .status(200)
+        .send({ message: "fetch successful", success: true, specialities });
+    } catch (error) {
+      res.status(500).send({
+        message: "Error occurred while fetching speciality" + error,
+        success: false,
+      });
+    }
+  },
+  fetchDoctors: async (req, res) => {
+    try {
+      const speciality = req.params.speciality;
+      const doctors = await doctorModel.find({
+        "additionalDetails.speciality": speciality,
+        "isVerified":true
+      });
+      if (doctors.length != 0) {
+        const updatedDoctors = await Promise.all(
+          doctors.map(async (elem) => {
+            const temp = await upload.getImageMultiple(elem.additionalDetails.profileImage);
+            elem.additionalDetails.profileImage = temp;
+            return elem;
+          }))
+        res
+          .status(200)
+          .send({ message: "fetch succesful", success: true, updatedDoctors });
+      } else {
+        res.status(200).send({
+          message: "fetch unsuccesful no doctors in the given speciality",
+          success: false,noDoctor:true
+        });
+      }
+    } catch (err) {
+      console.log(err);
+      res.status(500).send({
+        message: "Error occurred while fetching doctors" + err,
+        success: false,
+      });
+    }
+  },
+  updateLeave: async (req, res) => {
+    const { startDate, endDate, userId } = req.body;
+    try {
+      const doctor = await doctorModel.findById(userId);
+      const leaveDate ={
+        startDate:startDate,
+        endDate:endDate
+      }
+      doctor.leaveDates.push(leaveDate)
+      await doctor.save();
+      res.status(200).send({ message: "updated succesfully", success: true });
+    } catch (err) {
+      res.status(500).send({ message: err, success: false });
+    }
+  },
+  fetchLeave: async (req, res) => {
+    const { userId } = req.body;
+    try {
+      const doctor = await doctorModel.findById(userId);
+      if (doctor) {
+        res.status(200).send({
+          message: "fetch Successful",
+          leaveDates: doctor.leaveDates,
+          success: true,
+        });
+      } else {
+        res.status(200).send({ message: "Doc not found", success: false });
+      }
+    } catch (error) {
+      res.status(500).send({ message: err, success: false });
+    }
+  },
+  removeLeave:async(req,res)=>{
+   const {date,userId} = req.body
     try{
-      const specialities = await specialityModel.find()
-      res.status(200).send({message:'fetch successful',success:true,specialities})
-    }catch(error){
-      res.status(500).send({message:'Error occurred while fetching speciality'+error,success:false})
+      doctorModel.updateOne(
+        {
+          _id:userId
+        },
+        { $pull: { leaveDates: date} }
+      ).then((response)=>{
+        res.status(200).send({message:response,success:true})
+      })
+    }catch(err){
+      res.status(500).send({ message: err, success: false });
+    }
+  },
+  updateTimeSlot:async(req,res)=>{
+    const {timeSlot, userId} = req.body
+    try{
+      const doctor = await doctorModel.findById(userId);
+    doctor.timeSlots = timeSlot
+    await doctor.save()
+      res.status(200).send({message:'update successful',success:true})
+    }catch(err){
+      res.status(500).send({ message: err, success: false });
+    }
+  },
+  fetchTimeSlots:async(req,res)=>{
+    const{userId} = req.body
+    try{
+      const doctor = await doctorModel.findById(userId);
+      const timeSlot = doctor.timeSlots
+      res.status(200).send({message:'fetch successful',success:true,timeSlot})
+    }catch(err){
+      res.status(500).send({ message: err, success: false });
     }
   }
 };

@@ -2,6 +2,8 @@ const userModel = require("../models/userModels");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const doctorModel = require("../models/doctorModel");
+const appointmentsModel = require("../models/appointmentsModel");
+const { getImageMultiple } = require("../multer");
 module.exports = {
   registerController: async (req, res) => {
     const data = req.body;
@@ -97,6 +99,9 @@ module.exports = {
         });
       }
       if (doctor.status == "fulfilled" && doctor.value != null) {
+        doctor.value.bookedSlots=doctor.value.bookedSlots.reverse()
+        const temp = await getImageMultiple(doctor.value.additionalDetails.profileImage)
+        doctor.value.additionalDetails.profileImage=temp
         res.status(200).send({
           success: true,
           data: doctor.value,
@@ -130,7 +135,6 @@ module.exports = {
     try {
       const User = await userModel.findOne({ email: data.email });
       if (User) {
-        console.log(User, "already existing");
         const token = jwt.sign({ id: User._id }, process.env.JWT_SECRET, {
           expiresIn: "1d",
         });
@@ -180,6 +184,99 @@ module.exports = {
     }
     }catch(error){
       res.status(500).send({message:'There was an error while updating the phone',success:false})
+    }
+  },
+  doctorProfile:async(req,res)=>{
+    const {url} = req.body
+    const doctorId = req.params.id
+    try{
+      const doctor = await doctorModel.findOne({_id:doctorId,
+        isVerified:true})
+        if(doctor){
+          doctor.additionalDetails.profileImage = url;
+          res.status(200).send({message:'fetching doctor details succesful',success:true,doctor})
+
+        }
+    }catch(err){
+      res.status(500).send({message:'There was an error while fetching doctor details',success:false})
+    }
+  },
+  bookSlot:async(req,res)=>{
+    const {time,doctorId,sessionDate,userId} = req.body
+    try{
+      const patient = await userModel.findById(userId)
+      const doctor = await doctorModel.findById(doctorId)
+     const data = {
+        DoctorId:doctorId,
+        userId:userId,
+        time:time,
+        date:sessionDate,
+        doctorName:doctor.name,
+        doctorPhone:doctor.phone,
+        patientName:patient.name,
+        patientPhone:patient.phone
+      }
+      const newAppointment = new appointmentsModel(data)
+      newAppointment.save().then(async(response)=>{
+        const booking = {
+          date:sessionDate,
+          slots:[
+            {
+              time:time,
+              AppointmentId:response._id,
+              patientName:patient.name,
+              patientId:userId
+            }
+          ]
+        }
+        if(doctor.bookedSlots.length>0){
+         const matchedDate  =  doctor.bookedSlots.find(slot => slot.date === sessionDate)
+          if(matchedDate){
+            const matchedTime = matchedDate.slots.find(slot=>slot.time === time)
+            if(matchedTime){
+             res.status(200).send({message:"The Slot is already booked",success:true})
+            }else{
+              const timeSlot = {
+                time:time,
+                AppointmentId:response._id,
+                patientName:patient.name,
+                patientId:userId
+              }
+              matchedDate.slots.push(timeSlot)
+              await doctor.save()
+        res.status(200).send({message:'Slot booking succesful',success:true})
+            }
+          }else{
+          doctor.bookedSlots.push(booking)
+          await doctor.save()
+        res.status(200).send({message:'Slot booking succesful',success:true})
+          }
+        }else{
+          doctor.bookedSlots.push(booking)
+          await doctor.save()
+        res.status(200).send({message:'Slot booking succesful',success:true})
+        }
+      })
+    }catch(err){
+      console.log(err);
+      res.status(500).send({message:'There was an error while booking the slot',success:false})
+    }
+  },
+  fetchAppointments:async(req,res)=>{
+    const {userId} = req.body
+    try{
+      const appointments = await appointmentsModel.find({userId:userId}).sort({createdAt:-1})
+      const updatedAppointments = await Promise.all(
+        appointments.map(async (elem) => {
+          const doctor = await doctorModel.findById(elem.DoctorId)
+          const temp = await getImageMultiple(doctor.additionalDetails.profileImage);
+          elem.profileImage = temp;
+          return elem;
+        }))
+      res.status(200).send({message:'Appointment fetch succesful',success:true,updatedAppointments}) 
+    }catch(err){
+      console.log(err);
+      res.status(500).send({message:'There was an error while fetching appointments',success:false})
     }
   }
 };

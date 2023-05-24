@@ -42,6 +42,8 @@ const uploadToS3 = async (req, res, next) => {
     try {
       const command = new PutObjectCommand(params);
       await s3.send(command);
+      const location = `https://${bucketName}.s3.amazonaws.com/${req.params.id}.jpg`;
+      console.log(location);
       next();
     } catch (err) {
       return res.status(400).json({ error: err.message });
@@ -66,4 +68,19 @@ async function getImage(req, res, next) {
   }
 }
 
-module.exports = { uploadToS3, getImage };
+async function getImageMultiple(key) {
+  const getObjectParams = {
+    Bucket: bucketName,
+    Key: key,
+  };
+  try {
+    const command = new GetObjectCommand(getObjectParams);
+    const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
+    return url
+  } catch (error) {
+    res.status(500).send({message:"There was an error while fetching the image from the s3 bucket",success:false})
+    console.log(error);
+  }
+}
+
+module.exports = { uploadToS3, getImage,getImageMultiple };
