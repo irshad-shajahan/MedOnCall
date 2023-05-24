@@ -1,13 +1,18 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { useGetUserDetailsQuery } from '../../redux/features/api/apiSlice';
+import { useDocCheckQuery, useGetUserDetailsQuery } from '../../redux/features/api/apiSlice';
 import { setUser } from '../../redux/features/userSlice';
 
 export default function ProtectedRoute({ children }) {
   const dispatch = useDispatch();
   const token = localStorage.getItem('token');
   const { data, isSuccess } = useGetUserDetailsQuery();
+  const docCheck = useDocCheckQuery()
+  if(docCheck.isSuccess){
+    const check = docCheck?.data.doc
+    localStorage.setItem('check',JSON.stringify(check))
+  }
   if (isSuccess) {
     dispatch(setUser(data.data));
   }

@@ -27,7 +27,7 @@ function DutyAlert() {
   return (
     <div
       id="targetElement"
-      className={`p-4 mb-4 text-yellow-800 border border-yellow-300 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300 dark:border-yellow-800  ${
+      className={`p-4 mb-4 text-yellow-800 border h-40 border-yellow-300 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300 dark:border-yellow-800  ${
         dismissed ? 'hidden transition duration-1000 ease-in-out' : ''
       }`}
       role="alert"

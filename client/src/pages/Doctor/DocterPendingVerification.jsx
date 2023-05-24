@@ -1,12 +1,16 @@
 import React from 'react';
-import ReactTyped from 'react-typed';
-import { useNavigate } from 'react-router-dom';
+import { TypeAnimation } from 'react-type-animation';
+import {  useNavigate } from 'react-router-dom';
 import Navbar from '../../components/navbar/navbar';
 import { useGetUserDetailsQuery } from '../../redux/features/api/apiSlice';
 
 function DocterPendingVerification() {
   const navigate = useNavigate();
   const { data } = useGetUserDetailsQuery();
+  const check =  JSON.parse(localStorage.getItem('check'))
+  if(check.isVerified){
+    navigate('/doctor')
+  }
   const user = data?.data;
   if (user?.isVerified) {
     navigate('/doctor');
@@ -27,16 +31,16 @@ function DocterPendingVerification() {
               <h1 className="font-semibold text-blue-800 text-2xl mb-2 text-center">
                 Your account is being verified
               </h1>
-              <ReactTyped
+              <TypeAnimation
                 className="text-left ml-5 text-md font-semibold"
-                strings={[
+                sequence={[
                   'Verification in progress. Thank you for your patience.',
                   "Almost there! We're verifying your account now.",
                   "We're processing your account. Please stand by.",
                 ]}
-                typeSpeed={10}
-                backSpeed={50}
-                loop
+                speed={90}
+                deletionSpeed={80}
+                repeat={Infinity}
               />
             </div>
             <p className="text-gray-400 text-sm text-center">

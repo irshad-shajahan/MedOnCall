@@ -38,6 +38,12 @@ const Login = () => {
               localStorage.setItem('token', res.data.token);
               dispatch(setUser(res.data.response))
               dispatch(hideLoading())
+              const loc = {
+                isDoctor:res.data.response.isDoctor,
+                isProfileComplete:res.data.response.isProfileComplete,
+                isVerified:res.data.response.isVerified
+              }
+              localStorage.setItem("check",JSON.stringify(loc))
               if(res.data.response.isDoctor){
                navigate('/doctor')
               }else{

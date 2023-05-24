@@ -51,7 +51,6 @@ const clickHandle = async()=>{
     }
     dispatch(hideLoading())
   }
-  // navigate('/user/findDoctors/sdfsdf')
 }
 
 useEffect(() => {

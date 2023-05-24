@@ -1,14 +1,14 @@
 import React from 'react';
-import Navbar from '../../components/navbar/navbar';
 import DutyAlert from '../../components/doctor/DutyAlert';
+import DocNavbar from '../../components/navbar/docNavbar';
 
 function DocHome() {
 
   return (
     <div>
-      <Navbar>
+      <DocNavbar>
       <DutyAlert/>
-      </Navbar>
+      </DocNavbar>
     </div>
   );
 }

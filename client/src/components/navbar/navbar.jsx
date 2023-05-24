@@ -9,18 +9,16 @@ function Navbar({ children }) {
   const navigate = useNavigate();
   const user = useSelector((state) => state.user.user);
   const links = [
-    { name: 'Consult Doctors', link: '/' },
+    { name: 'Appointments', link: '/user/appointments' },
     { name: 'Medicines', link: '/' },
     { name: user?.name.toUpperCase().split(' ')[0], link: '/' },
   ];
-  if (user?.isDoctor) {
-    links[0].name = 'Consult Patients';
-  }
+
 
   const [open, SetOpen] = useState(false);
   const logout = () => {
     if (user?.isDoctor) {
-      if (user.Duty) {
+      if (user?.Duty) {
         docGet('/dutyon');
       }
     }
@@ -33,7 +31,7 @@ function Navbar({ children }) {
         <div className="shadow-md w-full fixed top-0 left-0">
           <div className=" md:flex items-center justify-between bg-blue-900 ">
             <div className="font-bold text-2xl cursor-pointer flex items-center font-[poppins] text-white">
-              <span className="text-3xl mr-1 bg-white rounded">
+              <span className="text-3xl mr-1 bg-white rounded" onClick={()=>navigate('/')}>
                 <img src="/logo.png" alt="" className="h-16" />
               </span>
             </div>
@@ -68,7 +66,9 @@ function Navbar({ children }) {
             </ul>
           </div>
         </div>
-        <div className="mt-16">{children}</div>
+        <div className="mt-16">
+          {children}
+        </div>
       </div>
     </div>
   );

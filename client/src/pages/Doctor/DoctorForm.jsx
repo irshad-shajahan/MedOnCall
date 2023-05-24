@@ -9,18 +9,20 @@ import Navbar from '../../components/navbar/navbar';
 import { imageForm } from '../../axios/apiCalls';
 import { hideLoading, showloading } from '../../redux/features/alertSlice';
 import { isValidRegNumber, isValidText } from '../../components/validations';
-import { useDocCheckQuery } from '../../redux/features/api/apiSlice';
+import { useGetUserDetailsQuery } from '../../redux/features/api/apiSlice';
 
 function DoctorForm() {
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const {data,isSuccess} = useDocCheckQuery()
-  const user = data?.doc
-if(isSuccess){
-if(user?.isProfileComplete){
+  const navigate = useNavigate();    
+  const check =  JSON.parse(localStorage.getItem('check'))
+  if(check.isProfileComplete){
     navigate('/doctor')
   }
-}
+  let user
+  const {data , isSuccess} = useGetUserDetailsQuery()
+  if(isSuccess){
+      user = data?.data
+  }
+  const dispatch = useDispatch();
   const [valid, setValid] = useState(false);
  
   const [formData, setFormData] = useState({});
@@ -101,11 +103,12 @@ if(user?.isProfileComplete){
             datas.append(key, formData[key]);
           }
           datas.append('image', img);
-          console.log(datas);
           imageForm(`/profilecomplete/${user.phone}`, datas).then((res) => {
-            console.log(res);
             dispatch(hideLoading());
+            console.log(res);
             navigate('/pendingVerification');
+            check.isProfileComplete = true
+            localStorage.setItem("check",JSON.stringify(check))
           });
         }
       }

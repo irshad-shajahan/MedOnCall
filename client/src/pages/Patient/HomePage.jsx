@@ -21,8 +21,6 @@ function HomePage() {
       dispatch(hideLoading())
     }else if (isSuccess) {
       dispatch(hideLoading());
-      console.log(data);
-      console.log(data?.doc?.isDoctor,'ssssssssssssssssssssss');
       if (data?.doc?.isDoctor) {
         navigate('/doctor');
       }
