@@ -1,18 +1,17 @@
 import React from 'react'
 import DocNavbar from '../../components/navbar/docNavbar'
-import DocAppointmentsList from '../../components/appointmentList/DocAppointments'
 import { useFetchDoctorAppointmentsQuery } from '../../redux/features/api/apiSlice'
+import DocAppointmentsHistory from '../../components/appointmentHistory/appointmentHistory'
 
-function Appointments() {
-    // const {data} = useGetUserDetailsQuery()
+function AppointmentsHistory() {
     const {data} = useFetchDoctorAppointmentsQuery()
-    const appointments = data?.appointments.filter(appoint => appoint.completed===false)
+    const appointments = data?.appointments.filter(appointment => appointment.completed===true)
   return (
     <div>
     <DocNavbar>
      <div className='flex'>
      <div className='flex w-full justify-center m-5'>
-        <DocAppointmentsList appointments={appointments} />
+        <DocAppointmentsHistory appointments={appointments} />
      </div>
      </div>
     </DocNavbar>
@@ -20,4 +19,4 @@ function Appointments() {
   )
 }
 
-export default Appointments
+export default AppointmentsHistory

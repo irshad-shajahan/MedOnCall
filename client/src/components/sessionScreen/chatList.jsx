@@ -9,8 +9,8 @@ function ChatList({ currentUser, convo, setcurrentChat,setSecondUSer }) {
     const sUser = fetch?.data?.data
     const letterIcon = sUser?.name.slice(0,1).toUpperCase()
     function clickHandler(){
-        setcurrentChat(convo._id)
-        setSecondUSer(sUser)
+        setcurrentChat(convo)
+        setSecondUSer(secondUserId)
     }
     if (fetch.isSuccess) {
         return (

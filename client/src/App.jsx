@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import { useSelector } from 'react-redux';
+import { io } from 'socket.io-client';
 import HomePage from './pages/Patient/HomePage';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -18,8 +19,16 @@ import UserRouter from './routes/userRouter';
 
 function App() {
   const isLoading = useSelector((state) => state.alerts.loading);
+  const socket = useRef()
   const Doctor = useSelector((state) => state.user.user);
   const isDoctor = Doctor?.isDoctor;
+  useEffect(() => {
+    socket.current = io('http://localhost:8080', { path: '/server/socket.io/' });
+    return () => {
+      socket.current.disconnect();
+    };
+  }, []);
+  
   return (
     <BrowserRouter>
       {isLoading && <Spinner />}
@@ -29,7 +38,7 @@ function App() {
           element={
             isDoctor ? (
               <ProtectedRoute>
-                <DoctorRouter />
+                <DoctorRouter socket={socket} />
               </ProtectedRoute>
             ) : (
               <ProtectedRoute>
@@ -74,7 +83,7 @@ function App() {
           path="/doctor/*"
           element={
             <ProtectedRoute>
-              <DoctorRouter />
+              <DoctorRouter socket={socket}/>
             </ProtectedRoute>
           }
         />
@@ -90,7 +99,7 @@ function App() {
           path="/user/*"
           element={
             <ProtectedRoute>
-              <UserRouter />
+              <UserRouter socket={socket} />
             </ProtectedRoute>
           }
         />

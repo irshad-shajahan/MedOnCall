@@ -9,6 +9,21 @@ const doctorSchema = new mongoose.Schema({
     type: Number,
     // required:[true, 'phone is required']
   },
+  wallet:{
+    DueAmount:{
+      type:Number,
+      default:0
+    },
+    CurrentBalance:{
+      type:Number,
+      default:0
+    },
+    amountWithdrawn:{
+      type:Number,
+      default:0
+    }
+  }
+  ,
   email: {
     type: String,
   },
@@ -32,6 +47,16 @@ const doctorSchema = new mongoose.Schema({
   },
   timeSlots: {
     type: Array,
+  },
+  feedback:{
+    rating:{
+      type:[Number],
+      maxlength:20
+    },
+    review:{
+      type:[String],
+      maxlength:6
+    }
   },
   additionalDetails: {
     profileImage: String,

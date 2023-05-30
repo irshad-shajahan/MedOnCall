@@ -23,6 +23,7 @@ function Navbar({ children }) {
       }
     }
     localStorage.removeItem('token');
+    localStorage.removeItem('check');
     navigate('/login');
   };
   return (

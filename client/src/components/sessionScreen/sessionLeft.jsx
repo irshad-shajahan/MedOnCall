@@ -1,13 +1,23 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable no-unused-vars */
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux';
 import ChatList from './chatList';
+import { useFetchSecondUserQuery } from '../../redux/features/api/apiSlice';
 
-function SessionLeft({setcurrentChat,convos}) {
-    console.log(convos);
+function SessionLeft({setcurrentChat,convos,active}) {
     const User = useSelector((state)=>state.user.user)
-    const [secondUser,setSecondUSer] = useState(null) 
+    const secondUserId = active?.members.find((m) => m !== User?._id)
+    const activeConvo = useFetchSecondUserQuery(secondUserId)
+    const activeSession = activeConvo?.data?.data
+    const [secUser,setSecondUSer] = useState(secondUserId)
+    const pastSessions = convos.filter(convo=>convo.active===false)
+    const pastSessionCount = pastSessions.length
+    const fetch = useFetchSecondUserQuery(secUser)
+    const secondUser = fetch?.data?.data
+    useEffect(()=>{
+        setcurrentChat(active)
+    })
     return (
         <div className="flex flex-col py-8 pl-6  w-64 bg-blue-100 md:pr-10 flex-shrink-0">
             <div className="flex flex-row items-center justify-center h-12 w-full">
@@ -38,34 +48,30 @@ function SessionLeft({setcurrentChat,convos}) {
             </div>:""}
             <div className="flex flex-col mt-8">
                 <div className="flex flex-row items-center justify-between text-xs">
-                    <span className="font-bold">Active Conversations</span>
-                    <span
-                        className="flex items-center justify-center bg-gray-300 h-4 w-4 rounded-full"
-                    >1</span
-                    >
+                    <span className="font-bold">Active Session</span>
                 </div>
                 <div className="flex flex-col space-y-1 mt-4 -mx-2 h-auto overflow-y-auto">
                     <button type='button'
-                        className="flex flex-row items-center hover:bg-gray-100 rounded-xl p-2"
+                        className="flex flex-row items-center hover:bg-gray-100 rounded-xl p-2" onClick={()=>{setcurrentChat(active); setSecondUSer(secondUserId)}}
                     >
                         <div
                             className="flex items-center justify-center h-8 w-8 bg-blue-400 rounded-full"
                         >
-                            {/* {letterIcon} */}
+                            <img src={activeSession?.additionalDetails?activeSession?.additionalDetails?.profileImage:"https://www.pngall.com/wp-content/uploads/5/User-Profile-PNG-High-Quality-Image.png"} className='rounded-full' alt="" />
                         </div>
-                        <div className="ml-2 text-sm font-semibold">gbdfuih</div>
+                        <div className="ml-2 text-sm font-semibold">{activeSession?.name}</div>
                     </button>
                 </div>
-                <div className="flex flex-row items-center justify-between text-xs mt-6">
+                {/* <div className="flex flex-row items-center justify-between text-xs mt-6">
                     <span className="font-bold">Past Sessions</span>
                     <span
                         className="flex items-center justify-center bg-gray-300 h-4 w-4 rounded-full"
-                    >8</span
+                    >{pastSessionCount}</span
                     >
                 </div>
-                {convos.map((elem)=>(
+                {pastSessions.map((elem)=>(
                     <ChatList setSecondUSer={setSecondUSer} setcurrentChat={setcurrentChat} currentUser={User?._id} convo={elem}/>
-                ))}
+                ))} */}
             </div>
         </div>
     )

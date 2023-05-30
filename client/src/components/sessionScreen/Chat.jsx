@@ -1,26 +1,46 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable react/self-closing-comp */
 import React, { useEffect, useRef, useState } from 'react'
 import { useSelector } from 'react-redux';
 import { useFetchMessagesQuery, useSendMessageMutation } from '../../redux/features/api/apiSlice'
 import Message from './Message';
 
-function Chat({ currentChat }) {
-    const { data, isSuccess } = useFetchMessagesQuery(currentChat)
+function Chat({ currentChat, socket }) {
+    const { data, isSuccess,refetch } = useFetchMessagesQuery(currentChat?._id)
     const User = useSelector((state) => state.user.user)
-    const [newMessage, setNewMessage] = useState()
+    const [newMessage, setNewMessage] = useState('')
     const [sendMessage, actions] = useSendMessageMutation()
     const scrollRef = useRef()
+
+    useEffect(() => {
+        socket.current.on('getMessage', () => {
+            refetch()
+        })
+    }, [])
+
+    function getReceiverid() {
+        if (currentChat) {
+            return currentChat.members?.filter((elem) => elem !== User?._id)[0]
+        }
+        return false
+    }
+
     async function handleSubmit() {
         const message = {
             Sender: User._id,
             text: newMessage,
             conversationId: currentChat
         }
+        socket.current.emit('sendMessage', {
+            receiverid: getReceiverid(),
+        })
 
-        await sendMessage(message)
+        if(!actions.isLoading){
+            await sendMessage(message)
+        }
+        setNewMessage('')
     }
 
+   
     useEffect(() => {
         scrollRef.current?.scrollIntoView({ behavior: "smooth" })
     }, [data])
@@ -67,10 +87,18 @@ function Chat({ currentChat }) {
                         </div>
                         <div className="flex-grow ml-4">
                             <div className="relative w-full">
-                                <input
-                                    type="text" onChange={(e) => setNewMessage(e.target.value)}
+                               {currentChat?.active? <input
+                                    type="text" onChange={(e) => setNewMessage(e.target.value)}  value={newMessage} onKeyDown={(e) => {
+                                        if (e.key === "Enter") {
+                                          handleSubmit();
+                                        }
+                                      }}
                                     className="flex w-full border rounded-xl focus:outline-none focus:border-indigo-300 pl-4 h-10"
-                                />
+                                />:
+                                 <input
+                                    type="text" onChange={(e) => setNewMessage(e.target.value)} disabled value='The session has ended' 
+                                    className="flex w-full border rounded-xl focus:outline-none bg-gray-100 text-center text-gray-300 focus:border-indigo-300 pl-4 h-10"
+                                />}
                                 <button type='button'
                                     className="absolute flex items-center justify-center h-full w-12 right-0 top-0 text-gray-400 hover:text-gray-600"
                                 >
@@ -113,6 +141,7 @@ function Chat({ currentChat }) {
                                     </svg>
                                 </span>
                             </button>
+                            
                         </div>
                     </div>
                 </div>

@@ -10,6 +10,7 @@ import UserPanel from './pages/UserPanel';
 import DoctorPanel from './pages/DoctorPanel';
 import DoctorDetails from './pages/DoctorDetails';
 import Manage from './pages/Manage';
+import PaymentPanel from './pages/PaymentPanel';
 
 const App = () => {
   return (
@@ -59,6 +60,14 @@ const App = () => {
         element={
           <ProtectedRoute>
             <Manage/>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/paymentpanel"
+        element={
+          <ProtectedRoute>
+            <PaymentPanel/>
           </ProtectedRoute>
         }
       />

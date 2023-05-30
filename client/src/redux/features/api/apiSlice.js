@@ -4,6 +4,7 @@ const baseQuery = fetchBaseQuery({
   baseUrl: 'http://localhost:8080/',
   prepareHeaders: (headers) => {
     headers.set('authorization', `Bearer ${localStorage.getItem('token')}`);
+    headers.set('credentials', 'include')
     return headers;
   },
 });
@@ -11,7 +12,17 @@ const baseQuery = fetchBaseQuery({
 export const apiSlice = createApi({
   reducerPath: 'api',
   baseQuery,
-  tagTypes: ['user', 'doctor','doctors','leave','timeSlot','appointments','conversation','messages','secondUSer'],
+  tagTypes: [
+    'user',
+    'doctor',
+    'doctors',
+    'leave',
+    'timeSlot',
+    'appointments',
+    'conversation',
+    'messages',
+    'secondUSer',
+  ],
   endpoints: (builder) => ({
     userLogin: builder.mutation({
       query: (data) => ({
@@ -27,7 +38,7 @@ export const apiSlice = createApi({
         method: 'POST',
         body: data,
       }),
-      invalidatesTags: ['user','doctor'],
+      invalidatesTags: ['user', 'doctor'],
     }),
     getUserDetails: builder.query({
       query: () => '/getUserData',
@@ -41,86 +52,137 @@ export const apiSlice = createApi({
     }),
     fetchDoctors: builder.query({
       query: (speciality) => `/doctor/fetchDoctors/${speciality}`,
-      providesTags: ['doctors']
+      providesTags: ['doctors'],
     }),
     fetchSpecialities: builder.query({
       query: () => '/doctor/fetchSpecialities',
       providesTags: ['doctor', 'speciality'],
     }),
-    updatePhone:builder.mutation({
+    updatePhone: builder.mutation({
       query: (data) => ({
-        url:'/updatePhone',
-      method:'PATCH',
-      body:data}),
-      invalidatesTags:['user']
+        url: '/updatePhone',
+        method: 'PATCH',
+        body: data,
+      }),
+      invalidatesTags: ['user'],
     }),
-    fetchDocLeaveDates:builder.query({
-      query:() =>'/doctor/fetchLeaveDates',
-      providesTags:['doctor','leave']
+    fetchDocLeaveDates: builder.query({
+      query: () => '/doctor/fetchLeaveDates',
+      providesTags: ['doctor', 'leave'],
     }),
-    updateDocLeave:builder.mutation({
-      query:(data) =>({
-        url:'/doctor/updateLeave',
+    updateDocLeave: builder.mutation({
+      query: (data) => ({
+        url: '/doctor/updateLeave',
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: ['doctor', 'leave'],
+    }),
+    removeLeave: builder.mutation({
+      query: (data) => ({
+        url: '/doctor/removeLeave',
+        method: 'PATCH',
+        body: data,
+      }),
+      invalidatesTags: ['doctor', 'leave'],
+    }),
+    updateTimeSlot: builder.mutation({
+      query: (data) => ({
+        url: '/doctor/updateTimeSlot',
+        method: 'PATCH',
+        body: data,
+      }),
+      invalidatesTags: ['doctor', 'timeSlot'],
+    }),
+    fetchTimeSlot: builder.query({
+      query: () => '/doctor/fetchTimeSlot',
+      providesTags: ['doctor', 'timeSlot'],
+    }),
+    fetchDoctorProfile: builder.query({
+      query: (id) => `/doctorProfile/${id}`,
+      providesTags: ['doctors'],
+    }),
+    bookSlot: builder.mutation({
+      query: (data) => ({
+        url: '/bookSlot',
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: ['doctor', 'appointments'],
+    }),
+    patientAppointments: builder.query({
+      query: () => '/fetchAppointments',
+      providesTags: ['appointments'],
+    }),
+    fetchConversation: builder.query({
+      query: () => '/com/fetchConvo',
+      providesTags: ['conversation'],
+    }),
+    fetchSecondUser: builder.query({
+      query: (id) => `/com/fetchSecondUser/${id}`,
+      providesTags: ['secondUSer'],
+    }),
+    fetchMessages: builder.query({
+      query: (convoId) => `/com/getMessages/${convoId}`,
+      providesTags: ['messages'],
+    }),
+    sendMessage: builder.mutation({
+      query: (data) => ({
+        url: '/com/addMessage',
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: ['messages'],
+    }),
+    createSession: builder.mutation({
+      query: (data) => ({
+        url: '/com/addConvo',
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: ['conversation','appointments'],
+    }),
+    endSession: builder.mutation({
+      query: (data) => ({
+        url: '/com/endConvo',
+        method: 'PATCH',
+        body: data,
+      }),
+      invalidatesTags: ['conversation','appointments'],
+    }),
+    fetchDoctorAppointments: builder.query({
+      query: () => '/doctor/fetchAppointments',
+      providesTags: ['appointments'],
+    }),
+    fetchVideoToken: builder.query({
+      query: (appointmentId) => `/com/generateToken/${appointmentId}`,
+      providesTags: ['conversation'],
+    }),
+    submitReview: builder.mutation({
+      query: (data) => ({
+        url:'/submitFeedback',
         method:'POST',
-        body:data,
-      }),
-      invalidatesTags:['doctor','leave']
-    }),
-    removeLeave:builder.mutation({
-      query:(data)=>({
-        url:'/doctor/removeLeave',
-        method:'PATCH',
-        body:data,
-      }),
-      invalidatesTags:['doctor','leave']
-    }),
-    updateTimeSlot:builder.mutation({
-      query:(data) =>({
-        url:'/doctor/updateTimeSlot',
-        method:'PATCH',
         body:data
       }),
-      invalidatesTags:['doctor','timeSlot']
+      invalidatesTags:['appointments']
     }),
-    fetchTimeSlot:builder.query({
-      query:()=>'/doctor/fetchTimeSlot',
-     providesTags:['doctor','timeSlot']
-    }),
-    fetchDoctorProfile:builder.query({
-      query:(id)=>`/doctorProfile/${id}`,
-     providesTags:['doctors']
-    }),
-    bookSlot:builder.mutation({
+    createCheckOutSession:builder.mutation({
       query:(data)=>({
-        url:'/bookSlot',
+        url:'/create-checkout-session',
+        method:'POST',
+        body:data
+      })
+    }),
+    submitPrescription:builder.mutation({
+      query:(data)=>({
+        url:'/doctor/submitPrescription',
         method:'POST',
         body:data
       }),
-      invalidatesTags:['doctor','appointments']
+      invalidatesTags:['appointments']
     }),
-    patientAppointments:builder.query({
-      query:()=>'/fetchAppointments',
-      providesTags:['appointments']
-    }),
-    fetchConversation:builder.query({
-      query:()=>'/com/fetchConvo',
-      providesTags:['conversation']
-    }),
-    fetchSecondUser:builder.query({
-      query:(id)=>`/com/fetchSecondUser/${id}`,
-      providesTags:['secondUSer']
-    }),
-    fetchMessages:builder.query({
-      query:(convoId)=>`/com/getMessages/${convoId}`,
-      providesTags:['messages']
-    }),
-    sendMessage:builder.mutation({
-      query:(data)=>({
-        url:'/com/addMessage',
-        method:'POST',
-        body:data
-      }),
-      invalidatesTags:['messages']
+    confirmBookingPayement:builder.query({
+      query:()=>'/confirmBooking'
     })
   }),
 });
@@ -144,5 +206,13 @@ export const {
   useFetchConversationQuery,
   useFetchSecondUserQuery,
   useFetchMessagesQuery,
-  useSendMessageMutation
+  useSendMessageMutation,
+  useCreateSessionMutation,
+  useEndSessionMutation,
+  useFetchDoctorAppointmentsQuery,
+  useFetchVideoTokenQuery,
+  useSubmitReviewMutation,
+  useCreateCheckOutSessionMutation,
+  useSubmitPrescriptionMutation,
+  useConfirmBookingPayementQuery
 } = apiSlice;

@@ -7,15 +7,20 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Datepicker from 'react-tailwindcss-datepicker';
 import { toast } from 'react-toastify';
+import { useDispatch } from 'react-redux';
 import Navbar from '../../components/navbar/navbar';
-import { useFetchDoctorProfileQuery } from '../../redux/features/api/apiSlice';
+import { useBookSlotMutation, useCreateCheckOutSessionMutation, useCreateSessionMutation, useFetchDoctorProfileQuery } from '../../redux/features/api/apiSlice';
 import WentWrong from '../../components/WentWrong';
+import { hideLoading, showloading } from '../../redux/features/alertSlice';
 
 function DoctorDetails() {
+  const dispatch = useDispatch()
+  const [createCheckoutSession, checkoutActions] = useCreateCheckOutSessionMutation()
+  const [bookSlot, bookingActions] = useBookSlotMutation();
   const params = useParams();
   const wildcardParamValue = params['*'];
   const [slot, setSlot] = useState(null);
-  const { data, isSuccess, isLoading, isFetching } =
+  const { data, isSuccess } =
     useFetchDoctorProfileQuery(wildcardParamValue);
   const [doctor, setDoctor] = useState(null);
   const [anotherDate, setAnotherDate] = useState(false);
@@ -40,16 +45,31 @@ function DoctorDetails() {
     );
   }
   const paymentNavigate = (t) => {
+    dispatch(showloading())
+    const checkOutData = {
+      doctorId: doctor?._id
+    }
     if (anotherDate) {
       if (slot) {
-        navigate('/user/paymentScreen', {
-          state: {
-            time: t,
-            // eslint-disable-next-line no-underscore-dangle
-            doctorId: doctor?._id,
-            sessionDate: slot.startDate,
-          },
-        });
+        const bookingData = {
+          time: t,
+          doctorId: doctor?._id,
+          sessionDate: slot.startDate,
+        }
+        if (!checkoutActions.isLoading) {
+          createCheckoutSession(checkOutData).then((res) => {
+            if (!bookingActions.isLoading) {
+              bookSlot(bookingData).then((response) => {
+                if (response?.data.success) {
+                  if (res?.data.success) {
+                    dispatch(hideLoading())
+                    window.location.href = res?.data.url
+                  }
+                }
+              })
+            }
+          })
+        }
       } else {
         toast.warning('Please select the date');
       }
@@ -58,15 +78,27 @@ function DoctorDetails() {
       const year = today.getFullYear();
       const month = String(today.getMonth() + 1).padStart(2, '0'); // Month index starts from 0, so we add 1
       const day = String(today.getDate()).padStart(2, '0');
-      const formattedDate = `${year}-${month}-${day}`;
-      navigate('/user/paymentScreen', {
-        state: {
-          time: t,
-          // eslint-disable-next-line no-underscore-dangle
-          doctorId: doctor?._id,
-          sessionDate: formattedDate,
-        },
-      });
+      const formattedDate = `${year}-${month}-${day}`
+      const bookingData = {
+        time: t,
+        doctorId: doctor?._id,
+        sessionDate: formattedDate,
+      };
+      if (!checkoutActions.isLoading) {
+        createCheckoutSession(checkOutData).then((res) => {
+          if (res?.data.success) {
+            if (!bookingActions.isLoading) {
+              bookSlot(bookingData).then((response) => {
+                if (response?.data.success) {
+                  dispatch(hideLoading())
+                  window.location.href = res?.data.url
+                }
+              })
+
+            }
+          }
+        })
+      }
     }
   };
   const anotherDateHandler = () => {
@@ -135,18 +167,18 @@ function DoctorDetails() {
                       </div>
                     </div>
                     <div className="w-full px-4">
-                    <div className=" flex flex-col min-w-0">
-                      <div className="px- flex-auto">
-                        <div className="text-blueGray-500 p-3 text-center inline-flex items-center justify-center w-12 h-12 mb-5 shadow-lg rounded-full bg-white">
-                          <ion-icon name="card" />
+                      <div className=" flex flex-col min-w-0">
+                        <div className="px- flex-auto">
+                          <div className="text-blueGray-500 p-3 text-center inline-flex items-center justify-center w-12 h-12 mb-5 shadow-lg rounded-full bg-white">
+                            <ion-icon name="card" />
+                          </div>
+                          <h6 className="text-base mb-1 font-semibold">Fee</h6>
+                          <p className="mb-4 text-blueGray-500 text-base">
+                            ₹ {doctor?.additionalDetails.Fee}/-
+                          </p>
                         </div>
-                        <h6 className="text-base mb-1 font-semibold">Fee</h6>
-                        <p className="mb-4 text-blueGray-500 text-base">
-                          ₹ {doctor?.additionalDetails.Fee}/-
-                        </p>
                       </div>
                     </div>
-                  </div>
                   </div>
 
                   <div className="w-full md:w-6/12 px-4">
@@ -179,102 +211,102 @@ function DoctorDetails() {
                     </div>
                   </div>
 
-                  
 
-                  
+
+
                 </div>
-                
+
               </div>
               <div className="w-[50%] px-4 mb-10">
-                    <div className="h-auto mb-5 rounded-lg border-2 border-dashed border-gray-600">
-                      <h5 className="text-lg font-semibold text-center mt-2">
-                        SELECT YOUR CONVENIENT SLOT
-                      </h5>
-                      <h5 className="font-semibold m-4">
-                        Booking for{' '}
-                        <span
-                          type="button"
-                          onClick={anotherDateHandler}
-                          className="cursor-pointer text-blue-500"
-                        >
-                          {' '}
-                          another date?
-                        </span>
-                      </h5>
-                      {anotherDate ? (
-                        <div className="flex justify-center p-2 border-b-2 border-double border-gray-500 transition-all duration-700">
-                          {/* <Calender type="date" name="date" onChange={selectDate} /> */}
-                          <Datepicker
-                            asSingle
-                            primaryColor="red"
-                            value={slot}
-                            disabledDates={data?.leaveDates}
-                            onChange={handleValueChange}
-                          />
-                        </div>
-                      ) : (
-                        ''
-                      )}
-
-                      <div className="grid mt-3 pb-2 md:grid-cols-3 sm:grid-cols-2 text-center">
-                        {doctor?.timeSlots.length > 0
-                          ? doctor?.timeSlots.map((element, i) =>
-                              element.booked ? (
-                                <div
-                                  className="w-20 h-12 ml-12 mt-5 bg-red-100 border-2 border-red-700 rounded flex disabled items-center justify-center"
-                                  disabled
-                                >
-                                  {element.time}
-                                </div>
-                              ) : (
-                                <div
-                                  onClick={() => {
-                                    paymentNavigate(element.time);
-                                  }}
-                                  className="w-20 h-12 ml-12 mt-5 bg-green-100 border-2 border-green-700 rounded flex disabled items-center justify-center hover:bg-slate-500 cursor-pointer"
-                                >
-                                  <p
-                                    key={i}
-                                    className={
-                                      element.booked
-                                        ? 'text-red-500'
-                                        : 'text-blue-900'
-                                    }
-                                  >
-                                    {element.time}
-                                  </p>
-                                </div>
-                              )
-                            )
-                          : doctor?.timeSlots.map((element, i) => (
-                              <div
-                                onClick={() => {
-                                  navigate('/user/paymentWIndow', {
-                                    state: {
-                                      time: element.time,
-                                      // eslint-disable-next-line no-underscore-dangle
-                                      doctorId: doctor._id,
-                                      sessionDate: slot.startDate,
-                                    },
-                                  });
-                                }}
-                                className="w-20 h-12 ml-12 mt-5 bg-green-100 border-2 border-green-700 rounded flex items-center justify-center hover:bg-slate-500 cursor-pointer"
-                              >
-                                <p
-                                  key={i}
-                                  className={
-                                    element.booked
-                                      ? 'text-red-500'
-                                      : 'text-blue-900'
-                                  }
-                                >
-                                  {element.time}
-                                </p>
-                              </div>
-                            ))}
-                      </div>
+                <div className="h-auto mb-5 rounded-lg border-2 border-dashed border-gray-600">
+                  <h5 className="text-lg font-semibold text-center mt-2">
+                    SELECT YOUR CONVENIENT SLOT
+                  </h5>
+                  <h5 className="font-semibold m-4">
+                    Booking for{' '}
+                    <span
+                      type="button"
+                      onClick={anotherDateHandler}
+                      className="cursor-pointer text-blue-500"
+                    >
+                      {' '}
+                      another date?
+                    </span>
+                  </h5>
+                  {anotherDate ? (
+                    <div className="flex justify-center p-2 border-b-2 border-double border-gray-500 transition-all duration-700">
+                      {/* <Calender type="date" name="date" onChange={selectDate} /> */}
+                      <Datepicker
+                        asSingle
+                        primaryColor="red"
+                        value={slot}
+                        disabledDates={data?.leaveDates}
+                        onChange={handleValueChange}
+                      />
                     </div>
+                  ) : (
+                    ''
+                  )}
+
+                  <div className="grid mt-3 pb-2 md:grid-cols-3 sm:grid-cols-2 text-center">
+                    {doctor?.timeSlots.length > 0
+                      ? doctor?.timeSlots.map((element, i) =>
+                        element.booked ? (
+                          <div
+                            className="w-20 h-12 ml-12 mt-5 bg-red-100 border-2 border-red-700 rounded flex disabled items-center justify-center"
+                            disabled
+                          >
+                            {element.time}
+                          </div>
+                        ) : (
+                          <div
+                            onClick={() => {
+                              paymentNavigate(element.time);
+                            }}
+                            className="w-20 h-12 ml-12 mt-5 bg-green-100 border-2 border-green-700 rounded flex disabled items-center justify-center hover:bg-slate-500 cursor-pointer"
+                          >
+                            <p
+                              key={i}
+                              className={
+                                element.booked
+                                  ? 'text-red-500'
+                                  : 'text-blue-900'
+                              }
+                            >
+                              {element.time}
+                            </p>
+                          </div>
+                        )
+                      )
+                      : doctor?.timeSlots.map((element, i) => (
+                        <div
+                          onClick={() => {
+                            navigate('/user/paymentWIndow', {
+                              state: {
+                                time: element.time,
+                                // eslint-disable-next-line no-underscore-dangle
+                                doctorId: doctor._id,
+                                sessionDate: slot.startDate,
+                              },
+                            });
+                          }}
+                          className="w-20 h-12 ml-12 mt-5 bg-green-100 border-2 border-green-700 rounded flex items-center justify-center hover:bg-slate-500 cursor-pointer"
+                        >
+                          <p
+                            key={i}
+                            className={
+                              element.booked
+                                ? 'text-red-500'
+                                : 'text-blue-900'
+                            }
+                          >
+                            {element.time}
+                          </p>
+                        </div>
+                      ))}
                   </div>
+                </div>
+              </div>
             </div>
           </div>
         </section>

@@ -9,7 +9,7 @@ export default function ProtectedRoute({ children }) {
   const token = localStorage.getItem('token');
   const { data, isSuccess } = useGetUserDetailsQuery();
   const docCheck = useDocCheckQuery()
-  if(docCheck.isSuccess){
+  if(docCheck?.data?.success){
     const check = docCheck?.data.doc
     localStorage.setItem('check',JSON.stringify(check))
   }

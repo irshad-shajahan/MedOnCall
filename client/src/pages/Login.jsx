@@ -38,15 +38,21 @@ const Login = () => {
               localStorage.setItem('token', res.data.token);
               dispatch(setUser(res.data.response))
               dispatch(hideLoading())
-              const loc = {
-                isDoctor:res.data.response.isDoctor,
-                isProfileComplete:res.data.response.isProfileComplete,
-                isVerified:res.data.response.isVerified
-              }
-              localStorage.setItem("check",JSON.stringify(loc))
               if(res.data.response.isDoctor){
+                const loc = {
+                  isDoctor:res.data.response.isDoctor,
+                  isProfileComplete:res.data.response.isProfileComplete,
+                  isVerified:res.data.response.isVerified
+                }
+                console.log(loc);
+                localStorage.setItem("check",JSON.stringify(loc))
                navigate('/doctor')
               }else{
+                const nodoctor = {
+                  isDoctor:false
+                }
+                console.log(nodoctor);
+                localStorage.setItem("check",JSON.stringify(nodoctor))
                 navigate('/')
               }
             } else {
@@ -74,7 +80,6 @@ const Login = () => {
           if (res.data.success) {
             toast('login succesfull');
             localStorage.setItem('token', res.data.token);
-            localStorage.setItem('doctor',true);
             navigate('/');
           } else {
             toast(res.data.message);

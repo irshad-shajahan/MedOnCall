@@ -24,6 +24,11 @@ const navElements = [
     route: '/doctor/appointments',
   },
   {
+    id: 3,
+    title: 'Appointment History',
+    route: '/doctor/appointmentHistory',
+  },
+  {
     id: 4,
     title: 'Settings',
     route: '/',
