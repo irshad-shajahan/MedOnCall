@@ -1,15 +1,22 @@
+/* eslint-disable no-nested-ternary */
 /* eslint-disable no-underscore-dangle */
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+// import { useCreateSessionMutation } from '../../redux/features/api/apiSlice';
 
 const AppointmentsList = ({ appointments }) => {
-  console.log(appointments);
+  function clickHandler( appointmentId) {
+        navigate('/user/startSession', { state: {appointmentId} })
+  }
     const navigate = useNavigate()
   return (
     <div className="bg-gray-100 p-4 rounded-lg w-full overflow-y-auto max-h-screen">
       <h2 className="text-lg font-semibold mb-4">Appointments</h2>
       {appointments?.map((appointment) => (
-        <div
+        
+       <div>
+        {appointment.active?(<div className='bg-green-500 rounded-t-md'><p className='font-semibold text-white text-center'>Active Session</p></div>):''}
+         <div
           key={appointment.id}
           className="bg-white w-full rounded-lg shadow p-4 mb-4 flex justify-between items-center"
          >
@@ -31,9 +38,26 @@ const AppointmentsList = ({ appointments }) => {
             <button type='button' className='bg-red-500 rounded-md p-1 font-semibold text-white'>Cancel Appointment</button>
           </div> */}
           <div className='w-[15%]'>
-            <button type='button' onClick={()=>navigate('/user/startSession')} className='bg-green-500 rounded-md p-1 font-semibold text-white'>Start Session</button>
+          
+          {appointment.completed ? (
+  <h3 className='font-semibold text-gray-500'>Session Completed</h3>
+) : (
+  appointment.active ? (
+    <button
+      type='button'
+      onClick={() => clickHandler(appointment?._id)}
+      className='bg-green-500 rounded-md p-1 font-semibold text-white'
+    >
+      Join Session
+    </button>
+  ) : (
+    <h3 className='font-semibold text-red-400'>Waiting for Doctor</h3>
+  )
+)}
+
           </div>
         </div>
+       </div>
       ))}
     </div>
   );

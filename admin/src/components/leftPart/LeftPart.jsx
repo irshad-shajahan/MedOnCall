@@ -1,10 +1,16 @@
-import React, { useEffect } from 'react';
+import React, { useEffect,useState } from 'react';
 import { getdata } from '../../axios/apicall';
 
 function LeftPart() {
+  const [count,setCount] = useState({doctor:0,patient:0})
   function getcount(){
     getdata('/docpatientcount').then((res)=>{
-      console.log(res);
+      const data={
+        doctor:res?.data.Dcount,
+        patient:res?.data.Pcount
+
+      }
+      setCount(data)
     })
   }
   useEffect(()=>{
@@ -16,7 +22,7 @@ function LeftPart() {
       <div className="max-w-sm  border border-gray-200 rounded-lg shadow ml-5 bg-blue-900">
         <h1 className='text-xl font-bold p-6 text-white'>Registered Doctors</h1>
       <div className="max-w-sm  bborder-gray-200 rounded-b-lg shadow  bg-blue-500">
-        <h1 className='text-3xl font-bold p-2 text-white text-right mr-5'>5</h1>
+        <h1 className='text-3xl font-bold p-2 text-white text-right mr-5'>{count.doctor}</h1>
       </div>
       </div>
       </div>
@@ -24,7 +30,7 @@ function LeftPart() {
       <div className="max-w-sm  border border-gray-200 rounded-lg shadow ml-5 bg-blue-900">
         <h1 className='text-xl font-bold p-6 text-white'>Registered Patients</h1>
       <div className="max-w-sm  bborder-gray-200 rounded-b-lg shadow  bg-blue-500">
-        <h1 className='text-3xl font-bold p-2 text-white text-right mr-5'>5</h1>
+        <h1 className='text-3xl font-bold p-2 text-white text-right mr-5'>{count.patient}</h1>
       </div>
       </div>
       </div>

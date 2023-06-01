@@ -1,12 +1,23 @@
 import React, { useEffect } from 'react';
 import { Route, Routes, useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import DocHome from '../pages/Doctor/DocHome';
 import DocProfile from '../pages/Doctor/DocProfile';
 import Availability from '../pages/Doctor/Availability';
 import Appointments from '../pages/Doctor/Appointments';
 import SessionScreen from '../pages/Doctor/SessionScreen';
+import AppointmentsHistory from '../pages/Doctor/appointmentHistory';
+import PreparePrescription from '../pages/Doctor/preparePrescription';
+import VideoCall from '../pages/Doctor/VideoCall';
 
-function DoctorRouter() {
+function DoctorRouter({socket}) {
+  const User = useSelector((state) => state.user.user)
+  useEffect(() => {
+    socket.current?.emit('adduser', User?._id)
+    socket.current?.on('getuser', () => {
+    })
+}, [User?._id])
+
   const navigate = useNavigate();
   const doc = JSON.parse(localStorage.getItem('check'))
   useEffect(() => {
@@ -16,6 +27,7 @@ function DoctorRouter() {
       navigate('/pendingVerification');
     }
   }, [doc]);
+  
 
   return (
     <Routes>
@@ -23,7 +35,10 @@ function DoctorRouter() {
       <Route path="/profile" element={<DocProfile />} />
       <Route path="/availability" element={<Availability />} />
       <Route path="/appointments" element={<Appointments />} />
-      <Route path="/startSession" element={<SessionScreen />} />
+      <Route path="/appointmentHistory" element={<AppointmentsHistory />} />
+      <Route path="/startSession/*" element={<SessionScreen socket={socket}/>} />
+      <Route path="/preparePrescription" element={<PreparePrescription  socket={socket}/>} />
+      <Route path="/videoCall" element={<VideoCall socket={socket}/>} />
     </Routes>
   );
 }

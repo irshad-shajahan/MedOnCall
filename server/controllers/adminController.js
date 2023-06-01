@@ -8,6 +8,7 @@ const userModel = require("../models/userModels");
 const doctormdel = require("../models/doctorModel");
 const doctorModel = require("../models/doctorModel");
 const specialityModel = require("../models/specialityModel");
+const paymentModel = require("../models/PaymentModel");
 module.exports = {
   loginController: (req, res) => {
     const data = req.body;
@@ -121,9 +122,9 @@ module.exports = {
   },
   addSpeciality: async (req, res) => {
     try {
-      const speciality={
-        name:req.body.speciality
-      }
+      const speciality = {
+        name: req.body.speciality,
+      };
       const newSpeciality = new specialityModel(speciality);
       await newSpeciality.save();
       res.status(201).send({ message: "Added Successfully", success: true });
@@ -133,22 +134,86 @@ module.exports = {
         .send({ message: "Error occurred while adding", success: false });
     }
   },
-  getSpecialities:async(req,res)=>{
-    try{
-        const specialities = await specialityModel.find()
-        res.status(200).send({message:"fetch successful",success:true,specialities})
-    }catch(error){
-        res
+  getSpecialities: async (req, res) => {
+    try {
+      const specialities = await specialityModel.find();
+      res
+        .status(200)
+        .send({ message: "fetch successful", success: true, specialities });
+    } catch (error) {
+      res
         .status(500)
         .send({ message: "Error occurred while fetching", success: false });
     }
   },
-  deleteSpeciality:(req,res)=>{
-   try{ const id = req.params.id
-    specialityModel.deleteOne({_id:id}).then((response)=>{
-      res.status(200).send({message:'delete succesful',success:true})
-    })}catch(error){
-      res.status(500).send({message:"error occurred",success:false})
+  deleteSpeciality: (req, res) => {
+    try {
+      const id = req.params.id;
+      specialityModel.deleteOne({ _id: id }).then((response) => {
+        res.status(200).send({ message: "delete succesful", success: true });
+      });
+    } catch (error) {
+      res.status(500).send({ message: "error occurred", success: false });
+    }
+  },
+  paymentPanel: async (req, res) => {
+    console.log("payment panel controller reached");
+    try {
+   const paymentDocuments = await paymentModel.find()
+   const updatedPaymentDocuments = await Promise.all(
+    paymentDocuments.map(async (paymentDoc) => {
+      const doctorData = await doctorModel.findOne({ _id: paymentDoc.doctorId });
+
+      const updatedDoc = {
+        ...paymentDoc.toObject(),
+        doctorName: doctorData?.name || '',
+        speciality: doctorData?.additionalDetails.speciality || '',
+        doctorId: doctorData?._id || ''
+      };
+
+      return updatedDoc;
+    })
+  );
+
+  res.status(200).send({message:"payment documents fetch succesful",success:true,doc:updatedPaymentDocuments})
+  }catch (err) {
+      console.log(err);
+      res
+        .status(500)
+        .send({ message: "there was an error at payment panel api",success:true });
+    }
+  },
+  approvePayment:async(req,res)=>{
+    console.log(req.body)
+    const {documentId,doctorId} = req.body
+    try{
+      const paymentDoc = await paymentModel.findById(documentId)
+      const doctor = await doctorModel.findById(doctorId)
+      doctor.wallet.CurrentBalance = paymentDoc.PendingPayment
+      paymentDoc.TotalAmountPayedSinceRegistered+=paymentDoc.PendingPayment
+      paymentDoc.PendingPayment = 0
+      doctor.wallet.DueAmount = 0
+      await doctor.save()
+      await paymentDoc.save()
+      const paymentDocuments = await paymentModel.find()
+      const updatedPaymentDocuments = await Promise.all(
+        paymentDocuments.map(async (paymentDoc) => {
+          const doctorData = await doctorModel.findOne({ _id: paymentDoc.doctorId });
+    
+          const updatedDoc = {
+            ...paymentDoc.toObject(),
+            doctorName: doctorData?.name || '',
+            speciality: doctorData?.additionalDetails.speciality || '',
+            doctorId: doctorData?._id || ''
+          };
+    
+          return updatedDoc;
+        })
+      );
+      res.status(200).send({message:"payment documents fetch succesful",success:true,doc:updatedPaymentDocuments})
+    }catch(err){
+      console.log(err);
+      res.status(500).send({message:"error while approving payment",success:false})
     }
   }
 };

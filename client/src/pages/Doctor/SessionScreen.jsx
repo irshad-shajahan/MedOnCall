@@ -1,25 +1,25 @@
-/* eslint-disable no-unused-vars */
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
+// import { io } from 'socket.io-client'
+import { useLocation } from 'react-router-dom'
 import Chat from '../../components/sessionScreen/Chat'
 import SessionLeft from '../../components/sessionScreen/sessionLeft'
 import ChatLayout from '../../components/sessionScreen/ChatLayout'
 import SessionRight from '../../components/sessionScreen/sessionRight'
-import { useFetchConversationQuery, useFetchSecondUserQuery } from '../../redux/features/api/apiSlice'
+import { useFetchConversationQuery } from '../../redux/features/api/apiSlice'
 
-function SessionScreen() {
+function SessionScreen({socket}) {
+    const location = useLocation();
+  const {appointmentId,receiverId} = location.state;
     const [currentChat, setcurrentChat] = useState(null)
-    const Conversation = useFetchConversationQuery()
-    // useEffect(() => {
-    //     if (Conversation.isSuccess) {
-    //         setUser(Conversation?.data.conversation[0].members[1])
-    //     }
-    // })
-    if (Conversation.isSuccess) {
+    const Convs = useFetchConversationQuery()
+     const Conversations = Convs.data?.conversation
+    const activeConversation = Conversations?.filter(conversation => conversation.active === true)[0]
+    if (Convs.isSuccess) {
         return (
             <ChatLayout>
-                <SessionLeft currentChat={currentChat} setcurrentChat={setcurrentChat} convos={Conversation.data.conversation} />
-                <Chat currentChat={currentChat} />
-                <SessionRight />
+                <SessionLeft setcurrentChat={setcurrentChat} convos={Conversations} active={activeConversation} />
+                <Chat currentChat={currentChat} socket={socket}/>
+                <SessionRight appointmentId={appointmentId} receiverId={receiverId} currentChat={currentChat} socket={socket}/>
             </ChatLayout >
         )
     }

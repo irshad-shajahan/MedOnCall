@@ -1,3 +1,4 @@
+const appointmentsModel = require("../models/appointmentsModel");
 const doctorModel = require("../models/doctorModel");
 const specialityModel = require("../models/specialityModel");
 const upload = require("../multer");
@@ -70,6 +71,7 @@ module.exports = {
         res.status(200).send({ message: "not a doctor", success: false });
       }
     } catch (error) {
+      console.log(error);
       res.status(500).send({ message: "error occured", success: false });
     }
   },
@@ -183,6 +185,38 @@ module.exports = {
       res.status(200).send({message:'fetch successful',success:true,timeSlot})
     }catch(err){
       res.status(500).send({ message: err, success: false });
+    }
+  },
+  fetchAppointments:async(req,res)=>{
+    const {userId} = req.body
+    try{
+      const appointments = await appointmentsModel.find({DoctorId:userId}).sort({createdAt:-1})
+      res.status(200).send({message:'Appointment fetch succesful',success:true,appointments}) 
+    }catch(err){
+      console.log(err);
+      res.status(500).send({message:'There was an error while fetching doctor appointments',success:false})
+    }
+  },
+  submitPrescription:async(req,res)=>{
+    const {age,appointmentId,diagnosedCondition,gender,medicines,patientName,userId} = req.body
+    try{
+      const appointment = await appointmentsModel.findById(appointmentId)
+      const doctor = await doctorModel.findById(userId)
+      appointment.prescriptionDone=true
+      const prescriptionData = {
+        patientName,  
+        Age:age,
+        DoctorSpeciality:doctor.additionalDetails.speciality,
+        diagnosedCondition,
+        gender,
+        medicines
+      }
+      appointment.prescription=prescriptionData
+      appointment.save()
+      res.status(200).send({message:'Prescription submitted',success:true})
+    }catch(error){
+      console.log(error);
+      res.status(500).send({message:"there was an error while submitting the prescription",success:false})
     }
   }
 };

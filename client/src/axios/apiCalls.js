@@ -8,7 +8,16 @@ export function postForm(route,data){
         Authorization: `Bearer ${localStorage.getItem('token')}`},
         withCredentials: true,
       })
-} 
+}
+
+export function getrequest(route){
+  return axios.get(route,{
+    responseType: 'blob',
+   headers: { "Content-Type": "application/json" ,
+   Authorization: `Bearer ${localStorage.getItem('token')}`},
+   withCredentials: true,
+ })
+}
 
 
 export function docPost(route,data){

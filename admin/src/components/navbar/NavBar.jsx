@@ -37,12 +37,18 @@ const navElements = [
   },
   {
     id: 3,
-    title: 'Manage',
+    title: 'Payment Panel',
+    icon: <ChatAltIcon className="w-6 h-6 cursor-pointer" />,
+    route: '/paymentpanel',
+  },
+  {
+    id: 4,
+    title: 'Manage Speciality',
     icon: <ChatAltIcon className="w-6 h-6 cursor-pointer" />,
     route: '/manage',
   },
   {
-    id: 4,
+    id: 5,
     title: 'Settings',
     icon: <CogIcon className="w-6 h-6 cursor-pointer" />,
     route: '/',

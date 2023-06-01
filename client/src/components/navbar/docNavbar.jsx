@@ -24,6 +24,7 @@ function DocNavbar({ children }) {
       }
     }
     localStorage.removeItem('token');
+    localStorage.removeItem('check');
     navigate('/login');
   };
 
@@ -76,7 +77,7 @@ function DocNavbar({ children }) {
           </div>
         </div>
         <div className="md:flex mt-16">
-          <SideBar showSidebar={showSidebar} handleSidebarToggle={handleSidebarToggle} />
+          <SideBar />
           <div className="md:flex-1 md:ml-[225px]">{children}</div>
         </div>
       </div>

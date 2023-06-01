@@ -17,12 +17,18 @@ const navElements = [
   },
   {
     id: 2,
+    title: 'Appt. records',
+    icon:<ion-icon name="medkit"/>,
+    route: '/user/feedback',
+  },
+  {
+    id: 3,
     title: 'Manage',
     icon:<ion-icon name="medkit"/>,
     route: '/',
   },
   {
-    id: 3,
+    id: 4,
     title: 'Logout',
     icon:<ion-icon name="medkit"/>,
     route: '/',
