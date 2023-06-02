@@ -12,25 +12,25 @@ const navElements = [
   {
     id: 1,
     title: 'Appointments',
-    icon:<ion-icon name="medkit"/>,
+    icon:<ion-icon name="chatbubbles"/>,
     route: '/user/appointments',
   },
   {
     id: 2,
     title: 'Appt. records',
-    icon:<ion-icon name="medkit"/>,
+    icon:<ion-icon name="clipboard"/>,
     route: '/user/feedback',
   },
   {
     id: 3,
     title: 'Manage',
-    icon:<ion-icon name="medkit"/>,
+    icon:<ion-icon name="cog"/>,
     route: '/',
   },
   {
     id: 4,
     title: 'Logout',
-    icon:<ion-icon name="medkit"/>,
+    icon:<ion-icon name="exit"/>,
     route: '/',
   },
 ];

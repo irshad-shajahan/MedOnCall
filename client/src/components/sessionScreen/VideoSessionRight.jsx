@@ -12,7 +12,7 @@ function VideoSessionRight({appointmentId,currentChat,socket,receiverId}) {
   const navigate = useNavigate()
   const [endSession,actions] = useEndSessionMutation()
   const User = useSelector((state)=>state.user.user)
-  const doc = JSON.parse()
+  const doc = JSON.parse(localStorage.getItem('check'))
   function getReceiverid() {
     if (currentChat) {
         return currentChat.members?.filter((elem) => elem !== User?._id)[0]

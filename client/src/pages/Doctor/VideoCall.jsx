@@ -10,13 +10,14 @@ import VideoSessionRight from '../../components/sessionScreen/VideoSessionRight'
 
 function VideoCall({socket}) {
     const location = useLocation();
+    console.log(location.state);
   const {appointmentId,receiverId} = location.state;
     const [currentChat, setcurrentChat] = useState(null)
     const Convs = useFetchConversationQuery()
     const {data ,isSuccess} = useFetchVideoTokenQuery(appointmentId)
      const Conversations = Convs.data?.conversation
     const activeConversation = Conversations?.filter(conversation => conversation.active === true)[0]
-    if (Convs.isSuccess && isSuccess) {
+    if (Convs?.isSuccess && isSuccess) {
         return (
             <ChatLayout>
                 <SessionLeft setcurrentChat={setcurrentChat} convos={Conversations} active={activeConversation} />

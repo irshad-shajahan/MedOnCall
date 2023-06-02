@@ -72,6 +72,7 @@ function DoctorDetails() {
         }
       } else {
         toast.warning('Please select the date');
+        dispatch(hideLoading())
       }
     } else {
       const today = new Date();

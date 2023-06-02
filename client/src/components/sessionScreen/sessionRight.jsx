@@ -45,7 +45,7 @@ function SessionRight({appointmentId,currentChat,socket,receiverId}) {
     if(doc?.isDoctor){
       navigate('/doctor/videoCall',{state:{appointmentId,receiverId}})
     }else{
-      navigate('/user/videoCall',{state:{appointmentId}})
+      navigate('/user/videoCall',{state:{appointmentId,receiverId}})
     }
   }
 

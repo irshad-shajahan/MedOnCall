@@ -1,19 +1,16 @@
-/* eslint-disable jsx-a11y/label-has-associated-control */
 /* eslint-disable react/no-array-index-key */
-/* eslint-disable no-unused-vars */
+/* eslint-disable jsx-a11y/label-has-associated-control */
 import React, { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom';
-import Swal from 'sweetalert2';
+import { toast } from 'react-toastify';
 import DocNavbar from '../../components/navbar/docNavbar'
 import { useSubmitPrescriptionMutation } from '../../redux/features/api/apiSlice';
 
-function PreparePrescription({socket}) {
+function PreparePrescription({ socket }) {
   const navigate = useNavigate()
   const location = useLocation();
-  const {appointmentId,receiverid} = location.state;
-  console.log('locationstate',location.state);
-  console.log(receiverid);
-  const [submitPrescription,PrescriptionActions] = useSubmitPrescriptionMutation()
+  const { appointmentId, receiverid } = location.state;
+  const [submitPrescription, PrescriptionActions] = useSubmitPrescriptionMutation()
   const [patientName, setPatientName] = useState('');
   const [age, setAge] = useState('');
   const [gender, setGender] = useState('');
@@ -36,7 +33,7 @@ function PreparePrescription({socket}) {
   };
   const handleSubmit = (e) => {
     e.preventDefault();
-    const prescriptionData={
+    const prescriptionData = {
       patientName,
       age,
       gender,
@@ -45,24 +42,13 @@ function PreparePrescription({socket}) {
       appointmentId
     }
     // Perform submission logic with the form data
-    if(!PrescriptionActions.isLoading){
-      submitPrescription(prescriptionData).then((res)=>{
-        if(res?.data.success){
-          socket.current.emit('prescription-done',{receiverid})
-          Swal.fire({
-            title: 'Success!',
-            text: 'Prescription submitted successfully',
-            icon: 'success',
-            confirmButtonColor: '#3085d6',
-            confirmButtonText: 'OK',
-            customClass: {
-              popup: 'custom-swal-popup',
-              title: 'custom-swal-title',
-              content: 'custom-swal-content',
-            },
-          }).then(()=>{
-            navigate('/doctor/appointmentHistory')
-          })
+    if (!PrescriptionActions.isLoading) {
+      submitPrescription(prescriptionData).then((res) => {
+        if (res?.data.success) {
+          socket.current.emit('prescription-done', { receiverid })
+          toast.success("succesfully submitted prescription")
+          navigate('/doctor/appointmentHistory')
+
         }
       })
     }
@@ -78,7 +64,6 @@ function PreparePrescription({socket}) {
       <DocNavbar>
         <div className='justify-center flex w-full mt-5'>
           <div className="bg-blue-200 py-4 px-6 rounded-lg max-w-4xl mx-auto">
-            <button type='button' onClick={()=>socket.current.emit('prescription-done',{receiverid})}>njekk</button>
             <h1 className="text-2xl text-center font-bold mb-6">Prescription Form</h1>
             <form onSubmit={handleSubmit}>
               <div className="mb-4">
@@ -92,46 +77,57 @@ function PreparePrescription({socket}) {
                   />
                 </label>
               </div>
-             <div className='flex w-full justify-between'>
-             <div className="mb-4 w-1/6 flex">
-                <label className="block mb-2 text-gray-700">
-                  Age:
-                  <input
-                    type="text"
-                    value={age}
-                    onChange={(e) => setAge(e.target.value)}
-                    className="border border-gray-400 rounded-lg px-3 py-2 mt-1 w-full"
-                  />
-                </label>
-              </div>
-              <div className="mb-4 w-1/4">
-                <label className="block mb-2 text-gray-700">
-                  Gender:
-                </label>
-                <div className="flex items-center">
-                  <input
-                    type="checkbox"
-                    checked={gender === 'male'}
-                    onChange={(e) =>
-                      setGender(e.target.checked ? 'male' : '')
-                    }
-                    className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-                  />
-                  <span className="ml-2 text-gray-700">Male</span>
+              <div className='flex w-full justify-between'>
+                <div className="mb-4 w-1/6 flex">
+                  <label className="block mb-2 text-gray-700">
+                    Age:
+                    <input
+                      type="text"
+                      value={age}
+                      onChange={(e) => setAge(e.target.value)}
+                      className="border border-gray-400 rounded-lg px-3 py-2 mt-1 w-full"
+                    />
+                  </label>
                 </div>
-                <div className="flex items-center mt-2">
-                  <input
-                    type="checkbox"
-                    checked={gender === 'female'}
-                    onChange={(e) =>
-                      setGender(e.target.checked ? 'female' : '')
-                    }
-                    className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-                  />
-                  <span className="ml-2 text-gray-700">Female</span>
+                <div className="mb-4 w-1/4">
+                  <label className="block mb-2 text-gray-700">
+                    Gender:
+                  </label>
+                  <div className="flex items-center">
+                    <input
+                      type="checkbox"
+                      checked={gender === 'male'}
+                      onChange={(e) =>
+                        setGender(e.target.checked ? 'male' : '')
+                      }
+                      className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                    />
+                    <span className="ml-2 text-gray-700">Male</span>
+                  </div>
+                  <div className="flex items-center mt-2">
+                    <input
+                      type="checkbox"
+                      checked={gender === 'female'}
+                      onChange={(e) =>
+                        setGender(e.target.checked ? 'female' : '')
+                      }
+                      className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                    />
+                    <span className="ml-2 text-gray-700">Female</span>
+                  </div>
+                  <div className="flex items-center mt-2">
+                    <input
+                      type="checkbox"
+                      checked={gender === 'other'}
+                      onChange={(e) =>
+                        setGender(e.target.checked ? 'other' : '')
+                      }
+                      className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                    />
+                    <span className="ml-2 text-gray-700">Other</span>
+                  </div>
                 </div>
               </div>
-             </div>
 
               <div className="mb-4">
                 <label className="block mb-2 text-gray-700">

@@ -218,5 +218,29 @@ module.exports = {
       console.log(error);
       res.status(500).send({message:"there was an error while submitting the prescription",success:false})
     }
+  },
+  doctorProfilefetch:async(req,res)=>{
+    const {userId,url} = req.body
+    try{
+      const doctor = await doctorModel.findById(userId)
+      doctor.additionalDetails.profileImage=url
+      res.status(200).send({message:"fetch succesful",success:true,doctor})
+    }catch(err){
+    console.log(err);
+    res.status(500).send({message:"there was an error while fetching doctor profile",success:false})
+  }
+  },
+  withdrawWallet:async(req,res)=>{
+    const {userId} = req.body
+    try{
+      const doctor = await doctorModel.findById(userId)
+      doctor.wallet.amountWithdrawn+=doctor.wallet.CurrentBalance
+      doctor.wallet.CurrentBalance = 0
+      doctor.save()
+      res.status(200).send({message:"upodate succesful",success:true})
+    }catch(err){
+      console.log(err);
+      res.status(500).send({message:"there was an error while updating the wallet",success:false})
+    }
   }
 };

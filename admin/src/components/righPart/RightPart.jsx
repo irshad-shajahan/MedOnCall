@@ -2,7 +2,7 @@ import React from 'react'
 
 function rightpart() {
   return (
-    <div>rightpart</div>
+    <div>fdfsffdgd</div>
   )
 }
 
