@@ -67,8 +67,9 @@ module.exports = {
         doctorPayment.CurrentFee=doctor.additionalDetails.Fee
         doctorPayment.TotalAppointments=appointments.length
         doctorPayment.TotalCommissionEarned+=commission
-        doctorPayment.PendingPayment=newPendingPayement
+        doctorPayment.PendingPayment+=newPendingPayement
         await doctorPayment.save()
+        doctor.wallet.totalAppointments = doctorPayment.TotalAppointments
         doctor.wallet.DueAmount=doctorPayment.PendingPayment
         await doctor.save();
       } else {

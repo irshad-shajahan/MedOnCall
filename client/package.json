@@ -17,6 +17,7 @@
     "@sweetalert2/themes": "^5.0.15",
     "agora-react-uikit": "^1.2.0",
     "axios": "^1.3.4",
+    "chart.js": "^4.3.0",
     "dayjs": "^1.11.7",
     "file-saver": "^2.0.5",
     "firebase": "^9.19.1",

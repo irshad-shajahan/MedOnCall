@@ -11,7 +11,7 @@ function Navbar({ children }) {
   const links = [
     { name: 'Appointments', link: '/user/appointments' },
     { name: 'Medicines', link: '/' },
-    { name: user?.name.toUpperCase().split(' ')[0], link: '/' },
+    { name: user?.name.toUpperCase().split(' ')[0], link: '/user/profile' },
   ];
 
 

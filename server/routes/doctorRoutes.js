@@ -1,7 +1,7 @@
 const express = require('express');
-const { verifyExist, doctorProfileComplete, dutyToggle, checkDoc, fetchSpeciality, fetchDoctors, updateLeave, fetchLeave, removeLeave, updateTimeSlot, fetchTimeSlots, fetchAppointments, submitPrescription } = require('../controllers/doctorController');
+const { verifyExist, doctorProfileComplete, dutyToggle, checkDoc, fetchSpeciality, fetchDoctors, updateLeave, fetchLeave, removeLeave, updateTimeSlot, fetchTimeSlots, fetchAppointments, submitPrescription, doctorProfilefetch, withdrawWallet } = require('../controllers/doctorController');
 const router = express.Router();
-const {uploadToS3} = require("../multer");
+const {uploadToS3, getImageDoctor} = require("../multer");
 const authMiddleware = require('../middlewares/authMiddleware');
 
 router.post('/existDoc',verifyExist)
@@ -17,5 +17,7 @@ router.patch('/updateTimeSlot',authMiddleware,updateTimeSlot)
 router.get('/fetchTimeSlot',authMiddleware,fetchTimeSlots)
 router.get('/fetchAppointments',authMiddleware,fetchAppointments)
 router.post('/submitPrescription',authMiddleware,submitPrescription)
+router.get('/doctorProfileData',authMiddleware,getImageDoctor,doctorProfilefetch)
+router.patch('/walletwithdraw',authMiddleware,withdrawWallet)
 
 module.exports =router;

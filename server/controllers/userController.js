@@ -421,5 +421,44 @@ module.exports = {
         .status(500)
         .send({ message: "error while generating pdf", success: false });
     }
+  },
+  updateProfile:async(req,res)=>{
+    const {phone,name,userId} = req.body
+    try{
+      const user = await userModel.findById(userId)
+      if(name && phone){
+        user.name = name
+        user.phone = phone
+        user.save()
+        res
+        .status(201)
+        .send({ message: "feedback submitted succesfully", success: true });
+      }else{
+        res
+      .status(402)
+      .send({ message: "error while upadting profile", success: false });
+      }
+    }catch(err){
+      console.log(err);
+      res
+      .status(500)
+      .send({ message: "error while upadting profile", success: false });
+    }
+  },
+  consultationCount:async(req,res)=>{
+    const {userId} = req.body
+    try{
+      const appointments = await appointmentsModel.find({userId})
+      console.log(appointments);
+      const count = appointments.length
+      res
+        .status(201)
+        .send({ message: "appointment count succesfully", success: true ,count});
+    }catch(err){
+      console.log(err);
+      res
+      .status(500)
+      .send({ message: "error while fetching appointments count", success: false });
+    }
   }
 };

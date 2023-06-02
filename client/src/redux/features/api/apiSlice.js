@@ -42,7 +42,7 @@ export const apiSlice = createApi({
     }),
     getUserDetails: builder.query({
       query: () => '/getUserData',
-      providesTags: ['user'],
+      providesTags: ['user','doctor'],
       headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
     }),
     docCheck: builder.query({
@@ -181,8 +181,28 @@ export const apiSlice = createApi({
       }),
       invalidatesTags:['appointments']
     }),
-    confirmBookingPayement:builder.query({
-      query:()=>'/confirmBooking'
+    doctorProfileData:builder.query({
+      query: () => '/doctor/doctorProfileData',
+      providesTags: ['doctor','appointments'],
+    }),
+    withdrawWalletAmount:builder.mutation({
+      query:()=>({
+        url:'/doctor/walletwithdraw',
+        method:'PATCH',
+      }),
+      invalidatesTags:['doctor','appointments']
+    }),
+    updateUserProfile:builder.mutation({
+      query:(data)=>({
+        url:'/updateProfile',
+        method:'PATCH',
+        body:data
+      }),
+      invalidatesTags:['user']
+    }),
+    fetchAppointmentsCount:builder.query({
+      query:()=>'/consultationCount',
+      providesTags:['user','appointments']
     })
   }),
 });
@@ -214,5 +234,8 @@ export const {
   useSubmitReviewMutation,
   useCreateCheckOutSessionMutation,
   useSubmitPrescriptionMutation,
-  useConfirmBookingPayementQuery
+  useDoctorProfileDataQuery,
+  useWithdrawWalletAmountMutation,
+  useUpdateUserProfileMutation,
+  useFetchAppointmentsCountQuery
 } = apiSlice;

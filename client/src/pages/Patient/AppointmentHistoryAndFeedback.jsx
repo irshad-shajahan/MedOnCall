@@ -5,6 +5,7 @@ import { usePatientAppointmentsQuery } from '../../redux/features/api/apiSlice'
 import WentWrong from '../../components/WentWrong';
 import UserAppointmentRecords from '../../components/appointmentHistory/UserAppointmentRecords'
 
+
 function AppointmentHistory({socket}) {
     const {data,isSuccess,refetch} = usePatientAppointmentsQuery()
     const appointments = data?.updatedAppointments.filter(appointment => appointment.completed===true)

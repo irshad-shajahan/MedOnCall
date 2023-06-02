@@ -52,7 +52,26 @@ const uploadToS3 = async (req, res, next) => {
 };
 
 async function getImage(req, res, next) {
-  const doc = await doctorModel.findById(req.params.id);
+  console.log(req.params.id);
+  const doc = await doctorModel.findById("643d53bf5e8d5c6b0fc612da");
+  const getObjectParams = {
+    Bucket: bucketName,
+    Key: doc.additionalDetails.profileImage,
+  };
+  try {
+    const command = new GetObjectCommand(getObjectParams);
+    const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
+    req.body.url = url
+    next()
+  } catch (error) {
+    res.status(500).send({message:"There was an error while fetching the image from the s3 bucket",success:false})
+    console.log(error);
+  }
+}
+
+async function getImageDoctor(req, res, next) {
+  const {userId} = req.body
+  const doc = await doctorModel.findById(userId);
   const getObjectParams = {
     Bucket: bucketName,
     Key: doc.additionalDetails.profileImage,
@@ -83,4 +102,4 @@ async function getImageMultiple(key) {
   }
 }
 
-module.exports = { uploadToS3, getImage,getImageMultiple };
+module.exports = { uploadToS3, getImage,getImageMultiple,getImageDoctor };

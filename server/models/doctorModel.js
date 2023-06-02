@@ -21,6 +21,10 @@ const doctorSchema = new mongoose.Schema({
     amountWithdrawn:{
       type:Number,
       default:0
+    },
+    totalAppointments:{
+      type:Number,
+      default:0
     }
   }
   ,

@@ -10,6 +10,7 @@ import SessionScreen from '../pages/Doctor/SessionScreen'
 import VideoCall from '../pages/Doctor/VideoCall'
 import AppointmentHistory from '../pages/Patient/AppointmentHistoryAndFeedback'
 import Success from '../pages/Patient/Success'
+import UserProfile from '../pages/Patient/UserProfile'
 
 function UserRouter({socket}) {
   const User = useSelector((state) => state.user.user)
@@ -29,6 +30,7 @@ function UserRouter({socket}) {
       <Route path="/feedback" element={<AppointmentHistory socket={socket} />} />
       <Route path="/videoCall" element={<VideoCall socket={socket}/>} />
       <Route path="/success/*" element={<Success />} />
+      <Route path="/profile" element={<UserProfile />} />
     </Routes>
   )
 }
