@@ -7,7 +7,7 @@ import {  usePatientAppointmentsQuery } from '../../redux/features/api/apiSlice'
 
 function Success() {
     const {data,isSuccess} =usePatientAppointmentsQuery()
-    
+
     if(!isSuccess){
         return (
             <WentWrong/>
