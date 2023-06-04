@@ -31,7 +31,7 @@ const dotenv = require('dotenv');
 //dotenv config
 dotenv.config()
 
-const connectDB = require('./config/dB');
+const connectDB = require('./config/db');
 //mongodb connection
 connectDB();
 
@@ -40,10 +40,11 @@ app.use(express.json());
 app.use(morgan('dev'))
 
 //cors
-app.use(cors({
-  origin:['http://localhost:3000', 'http://localhost:3001'],
-  credentials: true
-}))
+// app.use(cors({
+//   origin:['http://localhost:3000', 'http://localhost:3001'],
+//   credentials: true
+// }))
+app.use(cors())
 //port
 
 const port = process.env.PORT || 8080
@@ -58,10 +59,10 @@ const doctorRouter = require('./routes/doctorRoutes')
 const comRouter = require('./routes/communicationRoutes')
 
 //routes
-app.use("/",userRouter)
-app.use("/admin",adminRouter)
-app.use("/doctor",doctorRouter)
-app.use("/com",comRouter)
+app.use("/api",userRouter)
+app.use("/api/admin",adminRouter)
+app.use("/api/doctor",doctorRouter)
+app.use("/api/com",comRouter)
 
 
 

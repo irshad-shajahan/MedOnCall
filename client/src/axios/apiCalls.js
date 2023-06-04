@@ -3,7 +3,7 @@ import axios from './axios';
 
 
 export function postForm(route,data){
-       return axios.post(route,data,{
+       return axios.post(`${route}`,data,{
         headers: { "Content-Type": "application/json" ,
         Authorization: `Bearer ${localStorage.getItem('token')}`},
         withCredentials: true,
@@ -11,7 +11,7 @@ export function postForm(route,data){
 }
 
 export function getrequest(route){
-  return axios.get(route,{
+  return axios.get(`${route}`,{
     responseType: 'blob',
    headers: { "Content-Type": "application/json" ,
    Authorization: `Bearer ${localStorage.getItem('token')}`},
