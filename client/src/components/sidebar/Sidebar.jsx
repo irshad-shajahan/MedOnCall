@@ -7,7 +7,7 @@ const navElements = [
     id: 0,
     title: 'Profile',
     icon:<ion-icon name="person"/>,
-    route: '/',
+    route: '/user/profile',
   },
   {
     id: 1,
@@ -21,21 +21,14 @@ const navElements = [
     icon:<ion-icon name="clipboard"/>,
     route: '/user/feedback',
   },
-  {
-    id: 3,
-    title: 'Manage',
-    icon:<ion-icon name="cog"/>,
-    route: '/',
-  },
-  {
-    id: 4,
-    title: 'Logout',
-    icon:<ion-icon name="exit"/>,
-    route: '/',
-  },
 ];
-
 function SideBar({active}) {
+  const navigate = useNavigate()
+  const logout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('check');
+    navigate('/login');
+  };
   return (
     <nav className="col-span-2  h-screen bg-blue-900  md:block border-r border-gray-200 min-h-[90vh] w-[80px] xl:w-[225px] pt-8 px-1 flex flex-col items-start justify-between" style={{ overflow: 'hidden' }}>
       <div className="space-y-8 w-full ">
@@ -46,6 +39,18 @@ function SideBar({active}) {
         {navElements.slice(4, 6).map((link) => (
           <NavItem link={link} key={link.id} active={active} />
         ))}
+        <div
+          className="w-full flex items-center justify-start space-x-8 px-5 cursor-pointer
+       group"
+          onClick={logout}
+        >
+          <span className="text-3xl text-white">
+          <ion-icon name="exit"/>
+          </span>
+          <h1 className="text-white font-semibold group-hover:text-white xl:flex hidden">
+            Logout
+          </h1>
+        </div>
       </div>
     </nav>
   );

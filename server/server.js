@@ -8,9 +8,9 @@ const morgan = require('morgan');
 const cors =require('cors')
 const server = http.createServer(app)
 const io = require("socket.io")(server, {
-  path: '/server/socket.io/',
+  path: '/api/socket.io/',
   cors: {
-    origin: ["http://localhost:3000", "http://localhost:3001"],
+    origin: ["http://localhost:3000", "https://medoncall.online"],
     methods: ["GET", "POST", "OPTIONS"],
     credentials: true
   }
@@ -39,12 +39,12 @@ connectDB();
 app.use(express.json());
 app.use(morgan('dev'))
 
-//cors
-// app.use(cors({
-//   origin:['http://localhost:3000', 'http://localhost:3001'],
-//   credentials: true
-// }))
-app.use(cors())
+// cors
+app.use(cors({
+  origin:['http://localhost:3000', 'http://localhost:3001'],
+  credentials: true
+}))
+// app.use(cors())
 //port
 
 const port = process.env.PORT || 8080

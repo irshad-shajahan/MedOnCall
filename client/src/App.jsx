@@ -20,10 +20,10 @@ import UserRouter from './routes/userRouter';
 function App() {
   const isLoading = useSelector((state) => state.alerts.loading);
   const socket = useRef()
-  const Doctor = useSelector((state) => state.user.user);
-  const isDoctor = Doctor?.isDoctor;
+  const doc = JSON.parse(localStorage.getItem('check'))
+  const isDoctor = doc?.isDoctor;
   useEffect(() => {
-    socket.current = io('http://localhost:8080', { path: '/server/socket.io/' });
+    socket.current = io('https://medoncall.online', { path: '/api/socket.io/' });
     return () => {
       socket.current.disconnect();
     };
