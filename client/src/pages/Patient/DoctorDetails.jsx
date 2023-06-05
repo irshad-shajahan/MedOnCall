@@ -1,15 +1,13 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable react/no-array-index-key */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-/* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Datepicker from 'react-tailwindcss-datepicker';
 import { toast } from 'react-toastify';
 import { useDispatch } from 'react-redux';
 import Navbar from '../../components/navbar/navbar';
-import { useBookSlotMutation, useCreateCheckOutSessionMutation, useCreateSessionMutation, useFetchDoctorProfileQuery } from '../../redux/features/api/apiSlice';
+import { useBookSlotMutation, useCreateCheckOutSessionMutation, useFetchDoctorProfileQuery } from '../../redux/features/api/apiSlice';
 import WentWrong from '../../components/WentWrong';
 import { hideLoading, showloading } from '../../redux/features/alertSlice';
 

@@ -80,7 +80,7 @@ function NavBar() {
             <LogoutIcon className="w-6 h-6 cursor-pointer" />
           </span>
           <h1 className="text-gray-600 group-hover:text-black xl:flex hidden">
-            LogOut
+            Logout
           </h1>
         </div>
       </div>

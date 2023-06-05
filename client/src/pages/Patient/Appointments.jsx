@@ -1,14 +1,22 @@
 import React from 'react'
+import { useDispatch } from 'react-redux'
 import Navbar from '../../components/navbar/navbar'
 import SideBar from '../../components/sidebar/Sidebar'
 import AppointmentsList from '../../components/appointmentList/Appointments'
 import { usePatientAppointmentsQuery } from '../../redux/features/api/apiSlice'
 import WentWrong from '../../components/WentWrong';
+import { hideLoading, showloading } from '../../redux/features/alertSlice'
 
 function Appointments() {
-    const {data,isSuccess} = usePatientAppointmentsQuery()
-    if(!isSuccess){
-      return <WentWrong />
+  const dispatch = useDispatch()
+  const {data,isSuccess,isLoading} = usePatientAppointmentsQuery()
+  if(!isSuccess && !isLoading){
+    return <WentWrong />
+  }
+    if(isLoading){
+      dispatch(showloading())
+    }else{
+      dispatch(hideLoading())
     }
   return (
     <div>
