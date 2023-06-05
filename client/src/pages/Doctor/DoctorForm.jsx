@@ -9,8 +9,6 @@ import Navbar from '../../components/navbar/navbar';
 import { imageForm } from '../../axios/apiCalls';
 import { hideLoading, showloading } from '../../redux/features/alertSlice';
 import { isValidRegNumber, isValidText } from '../../components/validations';
-// import { useGetUserDetailsQuery } from '../../redux/features/api/apiSlice';
-// import WentWrong from '../../components/WentWrong';
 
 function DoctorForm() {
   const dispatch = useDispatch();
@@ -20,10 +18,6 @@ function DoctorForm() {
   if (check.isProfileComplete) {
     navigate('/doctor')
   }
-  // const { data, isSuccess, isLoading } = useGetUserDetailsQuery()
-  // console.log(data?.data);
-  // const user = data?.data 
-
   const [valid, setValid] = useState(false);
 
   const [formData, setFormData] = useState({});

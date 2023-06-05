@@ -18,7 +18,7 @@ function DoctorDetails() {
   const params = useParams();
   const wildcardParamValue = params['*'];
   const [slot, setSlot] = useState(null);
-  const { data, isSuccess } =
+  const { data, isSuccess, isLoading} =
     useFetchDoctorProfileQuery(wildcardParamValue);
   const [doctor, setDoctor] = useState(null);
   const [anotherDate, setAnotherDate] = useState(false);
@@ -28,20 +28,14 @@ function DoctorDetails() {
       setDoctor(data.doctor);
     }
   });
-  if (!isSuccess) {
+  if (!isSuccess && !isLoading) {
     return (
       <div>
         <WentWrong />
       </div>
     );
   }
-  if (!data.success) {
-    return (
-      <div>
-        <WentWrong />
-      </div>
-    );
-  }
+
   const paymentNavigate = (t) => {
     dispatch(showloading())
     const checkOutData = {
@@ -85,10 +79,10 @@ function DoctorDetails() {
       };
       if (!checkoutActions.isLoading) {
         createCheckoutSession(checkOutData).then((res) => {
-          if (res?.data.success) {
+          if (res?.data?.success) {
             if (!bookingActions.isLoading) {
               bookSlot(bookingData).then((response) => {
-                if (response?.data.success) {
+                if (response?.data?.success) {
                   dispatch(hideLoading())
                   window.location.href = res?.data.url
                 }
@@ -110,6 +104,12 @@ function DoctorDetails() {
   const handleValueChange = (value) => {
     setSlot(value);
   };
+  if(isLoading){
+    dispatch(showloading())
+  }else{
+    dispatch(hideLoading())
+  }
+if(isSuccess){
   return (
     <div>
       <Navbar>
@@ -312,6 +312,7 @@ function DoctorDetails() {
       </Navbar>
     </div>
   );
+}
 }
 
 export default DoctorDetails;

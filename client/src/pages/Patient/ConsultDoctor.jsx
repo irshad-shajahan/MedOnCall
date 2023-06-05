@@ -14,7 +14,7 @@ import WentWrong from '../../components/WentWrong';
 function ConsultDoctor() {
   const navigate = useNavigate()
   const dispatch = useDispatch()
-  const { data, isSuccess } = useFetchSpecialitiesQuery();
+  const { data, isSuccess,isLoading } = useFetchSpecialitiesQuery();
   const user = useSelector((state) => state.user.user);
   const [inputPhone, SetInputPhone] = useState(null)
   const [updatePhone] = useUpdatePhoneMutation()
@@ -54,10 +54,19 @@ const clickHandle = async()=>{
 }
 
 useEffect(() => {
-  // setPhone(user?.phone);
-  phoneRef.current = user?.phone; // update phoneRef on phone value change
+  phoneRef.current = user?.phone; 
 }, [user]);
-  if (isSuccess) {
+  if (!isSuccess && !isLoading) {
+    return(
+      <div><WentWrong/></div>
+      
+  )
+}
+  if(isLoading){
+    dispatch(showloading())
+  }else{
+    dispatch(hideLoading())
+  }
     return (
       <div>
         <Navbar>
@@ -129,11 +138,8 @@ useEffect(() => {
       </div>
       );
     }
-      return(
-        <div><WentWrong/></div>
-        
-    )
+     
   
-}
+
 
 export default ConsultDoctor;

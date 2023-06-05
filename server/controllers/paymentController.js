@@ -33,8 +33,8 @@ module.exports = {
           // appointmentId:appointmentId
         },
         mode: "payment",
-        success_url: "http://localhost:3000/user/success",
-        cancel_url: "http://localhost:3000/user/cancel",
+        success_url: "https://medoncall.online/user/success",
+        cancel_url: "https://medoncall.online/user/cancel",
       });
       console.log(session);
       req.session.verifyid = session.id;
