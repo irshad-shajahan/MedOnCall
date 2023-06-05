@@ -15,6 +15,7 @@ function ConsultDoctor() {
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const { data, isSuccess,isLoading } = useFetchSpecialitiesQuery();
+  console.log(data);
   const user = useSelector((state) => state.user.user);
   const [inputPhone, SetInputPhone] = useState(null)
   const [updatePhone] = useUpdatePhoneMutation()
@@ -67,76 +68,78 @@ useEffect(() => {
   }else{
     dispatch(hideLoading())
   }
-    return (
-      <div>
-        <Navbar>
-          <div className="flex items-center justify-center">
-            <div className="shadow-lg w-full md:w-[60%] justify-center box-border flex flex-col md:flex-row h-[65vh] md:mt-20 rounded-lg">
-              <div className="w-full md:w-2/3 flex flex-col items-baseline p-6 bg-gray-50">
-                <h1 className="font-bold text-center text-2xl">
-                  Consult <span className="text-blue-700">Doctors</span>
-                </h1>
-                <h3 className="m-5 text-xl font-semibold text-center">
-                  Enter Your Preferred Speciality
-                </h3>
-                <div className="items-center w-full">
-                  <Selector set={setSpclty} specialities={data?.specialities} />
+    if(isSuccess){
+      return (
+        <div>
+          <Navbar>
+            <div className="flex items-center justify-center">
+              <div className="shadow-lg w-full md:w-[60%] justify-center box-border flex flex-col md:flex-row h-[65vh] md:mt-20 rounded-lg">
+                <div className="w-full md:w-2/3 flex flex-col items-baseline p-6 bg-gray-50">
+                  <h1 className="font-bold text-center text-2xl">
+                    Consult <span className="text-blue-700">Doctors</span>
+                  </h1>
+                  <h3 className="m-5 text-xl font-semibold text-center">
+                    Enter Your Preferred Speciality
+                  </h3>
+                  <div className="items-center w-full">
+                    <Selector set={setSpclty} specialities={data?.specialities} />
+                  </div>
+                  <h3 className="m-5 text-base font-semibold text-center">
+                    Enter Your Phone Number
+                  </h3>
+                  <div className="items-center w-full">
+                    <input
+                      className=" md:w-72 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg border-2"
+                      type="text" value={phoneRef?.current || null} disabled={phoneRef?.current} onChange={(e)=>{SetInputPhone(e.target.value)}}
+                    />
+                  </div>
+  
+                  <button
+                    type="button"
+                    className="bg-blue-800 mt-5 w-full md:w-32 rounded p-2 text-white font-bold"
+                   onClick={clickHandle}>
+                    Find Doctors
+                  </button>
                 </div>
-                <h3 className="m-5 text-base font-semibold text-center">
-                  Enter Your Phone Number
-                </h3>
-                <div className="items-center w-full">
-                  <input
-                    className=" md:w-72 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg border-2"
-                    type="text" value={phoneRef?.current || null} disabled={phoneRef?.current} onChange={(e)=>{SetInputPhone(e.target.value)}}
-                  />
+                <div className="justify-center items-center w-1/3 hidden md:flex">
+                  <Carousel
+                    showThumbs={false}
+                    showArrows={false}
+                    showIndicators={false}
+                    showStatus={false}
+                    autoPlay
+                    infiniteLoop
+                    className="w-40"
+                  >
+                    <div>
+                      <img
+                        src="https://www.practo.com/consult/bundles/cwipage/images/ic-chats-v1.png"
+                        alt=" 1"
+                      />
+                      <span className="font-semibold">Free Follow-up</span>
+                    </div>
+                    <div>
+                      <img
+                        src="https://www.practo.com/consult/bundles/cwipage/images/qualified_doctors.png"
+                        alt=" 2"
+                      />
+                      <span className="font-semibold">Verified Doctors</span>
+                    </div>
+                    <div>
+                      <img
+                        src="https://www.practo.com/consult/bundles/cwipage/images/ic-security-v1.png"
+                        alt=" 3"
+                      />
+                      <span className="font-semibold">Secure Chats</span>
+                    </div>
+                  </Carousel>
                 </div>
-
-                <button
-                  type="button"
-                  className="bg-blue-800 mt-5 w-full md:w-32 rounded p-2 text-white font-bold"
-                 onClick={clickHandle}>
-                  Find Doctors
-                </button>
-              </div>
-              <div className="justify-center items-center w-1/3 hidden md:flex">
-                <Carousel
-                  showThumbs={false}
-                  showArrows={false}
-                  showIndicators={false}
-                  showStatus={false}
-                  autoPlay
-                  infiniteLoop
-                  className="w-40"
-                >
-                  <div>
-                    <img
-                      src="https://www.practo.com/consult/bundles/cwipage/images/ic-chats-v1.png"
-                      alt=" 1"
-                    />
-                    <span className="font-semibold">Free Follow-up</span>
-                  </div>
-                  <div>
-                    <img
-                      src="https://www.practo.com/consult/bundles/cwipage/images/qualified_doctors.png"
-                      alt=" 2"
-                    />
-                    <span className="font-semibold">Verified Doctors</span>
-                  </div>
-                  <div>
-                    <img
-                      src="https://www.practo.com/consult/bundles/cwipage/images/ic-security-v1.png"
-                      alt=" 3"
-                    />
-                    <span className="font-semibold">Secure Chats</span>
-                  </div>
-                </Carousel>
               </div>
             </div>
-          </div>
-        </Navbar>
-      </div>
-      );
+          </Navbar>
+        </div>
+        );
+    }
     }
      
   
