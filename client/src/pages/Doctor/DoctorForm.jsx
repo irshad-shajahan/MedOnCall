@@ -1,30 +1,31 @@
 /* eslint-disable guard-for-in */
 /* eslint-disable jsx-a11y/label-has-associated-control */
 /* eslint-disable react/no-unescaped-entities */
-import React, {  useState } from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Navbar from '../../components/navbar/navbar';
 import { imageForm } from '../../axios/apiCalls';
 import { hideLoading, showloading } from '../../redux/features/alertSlice';
 import { isValidRegNumber, isValidText } from '../../components/validations';
-import { useGetUserDetailsQuery } from '../../redux/features/api/apiSlice';
+// import { useGetUserDetailsQuery } from '../../redux/features/api/apiSlice';
+// import WentWrong from '../../components/WentWrong';
 
 function DoctorForm() {
-  const navigate = useNavigate();    
-  const check =  JSON.parse(localStorage.getItem('check'))
-  if(check.isProfileComplete){
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const User = useSelector((state)=>state.user.user)
+  const check = JSON.parse(localStorage.getItem('check'))
+  if (check.isProfileComplete) {
     navigate('/doctor')
   }
-  let user
-  const {data , isSuccess} = useGetUserDetailsQuery()
-  if(isSuccess){
-      user = data?.data
-  }
-  const dispatch = useDispatch();
+  // const { data, isSuccess, isLoading } = useGetUserDetailsQuery()
+  // console.log(data?.data);
+  // const user = data?.data 
+
   const [valid, setValid] = useState(false);
- 
+
   const [formData, setFormData] = useState({});
   const [img, setimg] = useState('');
   const [err, setErr] = useState({
@@ -103,12 +104,11 @@ function DoctorForm() {
             datas.append(key, formData[key]);
           }
           datas.append('image', img);
-          imageForm(`/profilecomplete/${user.phone}`, datas).then((res) => {
+          imageForm(`/profilecomplete/${User?.phone}`, datas).then(() => {
             dispatch(hideLoading());
-            console.log(res);
             navigate('/pendingVerification');
             check.isProfileComplete = true
-            localStorage.setItem("check",JSON.stringify(check))
+            localStorage.setItem("check", JSON.stringify(check))
           });
         }
       }
@@ -118,7 +118,9 @@ function DoctorForm() {
       dispatch(hideLoading());
     }
   }
-
+  // if (!isSuccess && !isLoading) {
+  //   return <WentWrong />
+  // }
   return (
     <div>
       <Navbar>

@@ -52,8 +52,7 @@ const uploadToS3 = async (req, res, next) => {
 };
 
 async function getImage(req, res, next) {
-  console.log(req.params.id);
-  const doc = await doctorModel.findById("643d53bf5e8d5c6b0fc612da");
+  const doc = await doctorModel.findById(req.params.id);
   const getObjectParams = {
     Bucket: bucketName,
     Key: doc.additionalDetails.profileImage,

@@ -18,7 +18,6 @@ const Login = () => {
   const [verifyGoogleLogin] = useUserGoogleLoginMutation();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({});
-  console.log(import.meta.env);
   function handleChange(event) {
     const { name, value } = event.target;
     setFormData({ ...formData, [name]: value });
