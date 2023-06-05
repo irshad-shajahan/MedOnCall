@@ -1,4 +1,4 @@
-name: ReactApp
+name: client
 
 on:
   push:
