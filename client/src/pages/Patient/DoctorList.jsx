@@ -2,20 +2,22 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Carousel } from 'react-responsive-carousel';
+import { useDispatch } from 'react-redux';
 import Navbar from '../../components/navbar/navbar';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import img1 from '../../assets/img1.jpg';
 import img2 from '../../assets/img2.jpeg';
 import img3 from '../../assets/img3.jpg';
-
 import { useFetchDoctorsQuery } from '../../redux/features/api/apiSlice';
 import WentWrong from '../../components/WentWrong';
+import { hideLoading, showloading } from '../../redux/features/alertSlice';
 
 function DoctorList() {
+  const dispatch = useDispatch()
   const navigate = useNavigate();
   const params = useParams();
   const wildcardParamValue = params['*'];
-  const { data, isSuccess, isLoading, isFetching } =
+  const { data, isSuccess, isLoading } =
     useFetchDoctorsQuery(wildcardParamValue);
   const [doctors, setDoctors] = useState([]);
   function clickHandler(id) {
@@ -26,13 +28,19 @@ function DoctorList() {
       setDoctors(data?.updatedDoctors);
     }
   }, [isSuccess]);
-  if (!isSuccess) {
+  if (!isSuccess && !isLoading) {
     return (
       <div>
         <WentWrong />
       </div>
     );
   }
+  if(isLoading){
+    dispatch(showloading())
+  }else{
+    dispatch(hideLoading())
+  }
+if(isSuccess){
   if (data.noDoctor) {
     return (
       <div>
@@ -45,7 +53,6 @@ function DoctorList() {
       </div>
     );
   }
-
   return (
     <div>
       <Navbar>
@@ -117,6 +124,8 @@ function DoctorList() {
       </Navbar>
     </div>
   );
+}
+
 }
 
 export default DoctorList;
