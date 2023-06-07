@@ -34,7 +34,7 @@ function DoctorRouter({socket}) {
       <Route path="/" element={<DocHome />} />
       <Route path="/profile" element={<DocProfile />} />
       <Route path="/availability" element={<Availability />} />
-      <Route path="/appointments" element={<Appointments />} />
+      <Route path="/appointments" element={<Appointments socket={socket}/>} />
       <Route path="/appointmentHistory" element={<AppointmentsHistory />} />
       <Route path="/startSession/*" element={<SessionScreen socket={socket}/>} />
       <Route path="/preparePrescription" element={<PreparePrescription  socket={socket}/>} />

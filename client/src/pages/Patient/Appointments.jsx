@@ -7,24 +7,25 @@ import { usePatientAppointmentsQuery } from '../../redux/features/api/apiSlice'
 import WentWrong from '../../components/WentWrong';
 import { hideLoading, showloading } from '../../redux/features/alertSlice'
 
-function Appointments() {
+function Appointments({socket}) {
   const dispatch = useDispatch()
-  const {data,isSuccess,isLoading} = usePatientAppointmentsQuery()
-  if(!isSuccess && !isLoading){
-    return <WentWrong />
-  }
-    if(isLoading){
-      dispatch(showloading())
+  const {data,isSuccess,isLoading,refetch} = usePatientAppointmentsQuery()
+  if(isLoading){
+    dispatch(showloading())
     }else{
       dispatch(hideLoading())
     }
+
+      if(!isSuccess && !isLoading){
+        return <WentWrong />
+      }
   return (
     <div>
         <Navbar>
          <div className='flex'>
          <SideBar active={1}/>
          <div className='flex w-3/4 justify-center m-5'>
-            <AppointmentsList appointments={data?.updatedAppointments} />
+            <AppointmentsList appointments={data?.updatedAppointments} socket={socket} refetch={refetch}/>
          </div>
          </div>
         </Navbar>

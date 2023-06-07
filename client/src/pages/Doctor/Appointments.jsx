@@ -6,7 +6,7 @@ import { useFetchDoctorAppointmentsQuery } from '../../redux/features/api/apiSli
 import WentWrong from '../../components/WentWrong'
 import { hideLoading, showloading } from '../../redux/features/alertSlice'
 
-function Appointments() {
+function Appointments({socket}) {
   const dispatch = useDispatch()
   const { data,isLoading,isSuccess } = useFetchDoctorAppointmentsQuery()
   const appointments = data?.appointments.filter(appoint => appoint.completed === false)
@@ -23,7 +23,7 @@ function Appointments() {
       <DocNavbar>
         <div className='flex'>
           <div className='flex w-full justify-center m-5'>
-            <DocAppointmentsList appointments={appointments} />
+            <DocAppointmentsList appointments={appointments} socket={socket} />
           </div>
         </div>
       </DocNavbar>

@@ -104,14 +104,14 @@ export const apiSlice = createApi({
       query: (id) => `/doctorProfile/${id}`,
       providesTags: ['doctors'],
     }),
-    bookSlot: builder.mutation({
-      query: (data) => ({
-        url: '/bookSlot',
-        method: 'POST',
-        body: data,
-      }),
-      invalidatesTags: ['doctor', 'appointments'],
-    }),
+    // bookSlot: builder.mutation({
+    //   query: (data) => ({
+    //     url: '/bookSlot',
+    //     method: 'POST',
+    //     body: data,
+    //   }),
+    //   invalidatesTags: ['doctor', 'appointments'],
+    // }),
     patientAppointments: builder.query({
       query: () => '/fetchAppointments',
       providesTags: ['appointments'],
@@ -205,6 +205,18 @@ export const apiSlice = createApi({
     fetchAppointmentsCount:builder.query({
       query:()=>'/consultationCount',
       providesTags:['user','appointments']
+    }),
+    verifyPayment:builder.query({
+      query:()=>'/verifyPayment',
+      invalidatesTags: ['doctor', 'appointments'],
+    }),
+    dummyrefetchAppointments:builder.mutation({
+        query:(data)=>({
+        url:'/refetchAppntments',
+        method:'POST',
+        body:data
+      }),
+      invalidatesTags:['doctor', 'appointments']
     })
   }),
 });
@@ -239,5 +251,7 @@ export const {
   useDoctorProfileDataQuery,
   useWithdrawWalletAmountMutation,
   useUpdateUserProfileMutation,
-  useFetchAppointmentsCountQuery
+  useFetchAppointmentsCountQuery,
+  useVerifyPaymentQuery,
+  useDummyrefetchAppointmentsMutation
 } = apiSlice;

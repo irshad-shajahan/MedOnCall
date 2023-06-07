@@ -6,8 +6,16 @@ const appointmentsModel = require("../models/appointmentsModel");
 const { getImageMultiple } = require("../multer");
 const fs = require("fs");
 const PDFDocument = require("pdfkit");
-const { generateHeader, generateHr, generateTableRow, docDetails, generateFooter, DiagnosedCondition } = require("../middlewares/pdfFuntions");
+const {
+  generateHeader,
+  generateHr,
+  generateTableRow,
+  docDetails,
+  generateFooter,
+  DiagnosedCondition,
+} = require("../middlewares/pdfFuntions");
 const { initiatePayment } = require("./paymentController");
+const { getPayment } = require("../listeners/PaymentListner");
 module.exports = {
   registerController: async (req, res) => {
     const data = req.body;
@@ -55,14 +63,12 @@ module.exports = {
         const token = jwt.sign({ id: user.value._id }, process.env.JWT_SECRET, {
           expiresIn: "1d",
         });
-        return res
-          .status(200)
-          .send({
-            message: `Login Succesful`,
-            success: true,
-            token,
-            response: user.value,
-          });
+        return res.status(200).send({
+          message: `Login Succesful`,
+          success: true,
+          token,
+          response: user.value,
+        });
       }
       if (doctor.status == "fulfilled" && doctor.value != null) {
         const isMatch = await bcrypt.compare(
@@ -81,14 +87,12 @@ module.exports = {
             expiresIn: "1d",
           }
         );
-        return res
-          .status(200)
-          .send({
-            message: `Login Succesful`,
-            success: true,
-            token,
-            response: doctor.value,
-          });
+        return res.status(200).send({
+          message: `Login Succesful`,
+          success: true,
+          token,
+          response: doctor.value,
+        });
       }
       if (user.status == "fulfilled" && doctor.status == "fulfilled") {
         if (user.value == null && doctor.value == null) {
@@ -111,6 +115,7 @@ module.exports = {
     }
   },
   authController: async (req, res) => {
+    req.session.hi = "hello";
     try {
       const [user, doctor] = await Promise.allSettled([
         userModel.findOne({ _id: req.body.userId }),
@@ -208,20 +213,16 @@ module.exports = {
         const user = await userModel.findById(id);
         user.phone = req.body.phone;
         await user.save();
-        res
-          .status(200)
-          .send({
-            message: "The phone was successfully updated",
-            success: true,
-          });
+        res.status(200).send({
+          message: "The phone was successfully updated",
+          success: true,
+        });
       }
     } catch (error) {
-      res
-        .status(500)
-        .send({
-          message: "There was an error while updating the phone",
-          success: false,
-        });
+      res.status(500).send({
+        message: "There was an error while updating the phone",
+        success: false,
+      });
     }
   },
   doctorProfile: async (req, res) => {
@@ -234,100 +235,17 @@ module.exports = {
       });
       if (doctor) {
         doctor.additionalDetails.profileImage = url;
-        res
-          .status(200)
-          .send({
-            message: "fetching doctor details succesful",
-            success: true,
-            doctor,
-          });
+        res.status(200).send({
+          message: "fetching doctor details succesful",
+          success: true,
+          doctor,
+        });
       }
     } catch (err) {
-      res
-        .status(500)
-        .send({
-          message: "There was an error while fetching doctor details",
-          success: false,
-        });
-    }
-  },
-  bookSlot: async (req, res) => {
-    const { time, doctorId, sessionDate, userId } = req.body;
-    try {
-      const patient = await userModel.findById(userId);
-      const doctor = await doctorModel.findById(doctorId);
-      const data = {
-        DoctorId: doctorId,
-        userId,
-        time,
-        date: sessionDate,
-        doctorName: doctor.name,
-        doctorPhone: doctor.phone,
-        patientName: patient.name,
-        patientPhone: patient.phone,
-      };
-      const newAppointment = new appointmentsModel(data);
-      newAppointment.save().then(async (response) => {
-        initiatePayment(doctorId)
-        const booking = {
-          date: sessionDate,
-          slots: [
-            {
-              time: time,
-              AppointmentId: response._id,
-              patientName: patient.name,
-              patientId: userId,
-            },
-          ],
-        };
-        if (doctor.bookedSlots.length > 0) {
-          const matchedDate = doctor.bookedSlots.find(
-            (slot) => slot.date === sessionDate
-          );
-          if (matchedDate) {
-            const matchedTime = matchedDate.slots.find(
-              (slot) => slot.time === time
-            );
-            if (matchedTime) {
-              res
-                .status(200)
-                .send({ message: "The Slot is already booked", success: false });
-            } else {
-              const timeSlot = {
-                time: time,
-                AppointmentId: response._id,
-                patientName: patient.name,
-                patientId: userId,
-              };
-              matchedDate.slots.push(timeSlot);
-              await doctor.save();
-              res
-                .status(200)
-                .send({ message: "Slot booking succesful", success: true });
-            }
-          } else {
-            doctor.bookedSlots.push(booking);
-            await doctor.save();
-            res
-              .status(200)
-              .send({ message: "Slot booking succesful", success: true });
-          }
-        } else {
-          doctor.bookedSlots.push(booking);
-          await doctor.save();
-          res
-            .status(200)
-            .send({ message: "Slot booking succesful", success: true });
-        }
+      res.status(500).send({
+        message: "There was an error while fetching doctor details",
+        success: false,
       });
-    } catch (err) {
-      console.log(err);
-      res
-        .status(500)
-        .send({
-          message: "There was an error while booking the slot",
-          success: false,
-        });
     }
   },
   fetchAppointments: async (req, res) => {
@@ -346,21 +264,17 @@ module.exports = {
           return elem;
         })
       );
-      res
-        .status(200)
-        .send({
-          message: "Appointment fetch succesful",
-          success: true,
-          updatedAppointments,
-        });
+      res.status(200).send({
+        message: "Appointment fetch succesful",
+        success: true,
+        updatedAppointments,
+      });
     } catch (err) {
       console.log(err);
-      res
-        .status(500)
-        .send({
-          message: "There was an error while fetching user appointments",
-          success: false,
-        });
+      res.status(500).send({
+        message: "There was an error while fetching user appointments",
+        success: false,
+      });
     }
   },
   submitFeedback: async (req, res) => {
@@ -378,42 +292,54 @@ module.exports = {
         .status(201)
         .send({ message: "feedback submitted succesfully", success: true });
     } catch (err) {
-      res
-        .status(500)
-        .send({
-          message: "There was an error while submitting the feedback",
-          success: false,
-        });
+      res.status(500).send({
+        message: "There was an error while submitting the feedback",
+        success: false,
+      });
     }
   },
-  downloadPrescription: async(req, res) => {
-    console.log(req.body);
-    const {appointmentId} = req.params
+  downloadPrescription: async (req, res) => {
+    const { appointmentId } = req.params;
     try {
-      const appointment = await appointmentsModel.findById(appointmentId)
-      const medicines = appointment.prescription.medicines
-      console.log(appointment);
+      const appointment = await appointmentsModel.findById(appointmentId);
+      const medicines = appointment.prescription.medicines;
       const doc = new PDFDocument({ size: "A4", margin: 50 });
       res.setHeader("Content-Type", "application/pdf");
       res.setHeader("Content-Disposition", "attachment; filename=test.pdf");
       doc.pipe(res);
-      await generateHeader(doc,appointmentId.slice(0,8)) 
-      await generateHr(doc,185)
-      await docDetails(doc,appointment.doctorName,appointment.date,appointment.time,appointment.prescription.patientName,appointment.prescription.Age,appointment.prescription.gender)
-      await generateHr(doc,250)
-      await DiagnosedCondition(doc,appointment.prescription.diagnosedCondition)
-      await generateHr(doc,320)
-      await generateTableRow(doc,335,"Medicine","Dosage","Sl no.")
-      await generateHr(doc,350)
-      let position = 340
-      let serielNo=0
-      for(let i=0;i<medicines.length;i++){
-        position = position+30
-        serielNo++
-        await generateTableRow(doc,position,medicines[i].medicine,medicines[i].dosage,serielNo)
-
+      await generateHeader(doc, appointmentId.slice(0, 8));
+      await generateHr(doc, 185);
+      await docDetails(
+        doc,
+        appointment.doctorName,
+        appointment.date,
+        appointment.time,
+        appointment.prescription.patientName,
+        appointment.prescription.Age,
+        appointment.prescription.gender
+      );
+      await generateHr(doc, 250);
+      await DiagnosedCondition(
+        doc,
+        appointment.prescription.diagnosedCondition
+      );
+      await generateHr(doc, 320);
+      await generateTableRow(doc, 335, "Medicine", "Dosage", "Sl no.");
+      await generateHr(doc, 350);
+      let position = 340;
+      let serielNo = 0;
+      for (let i = 0; i < medicines.length; i++) {
+        position = position + 30;
+        serielNo++;
+        await generateTableRow(
+          doc,
+          position,
+          medicines[i].medicine,
+          medicines[i].dosage,
+          serielNo
+        );
       }
-      await generateFooter(doc,750)
+      await generateFooter(doc, 750);
       doc.end();
     } catch (err) {
       console.log(err);
@@ -422,43 +348,48 @@ module.exports = {
         .send({ message: "error while generating pdf", success: false });
     }
   },
-  updateProfile:async(req,res)=>{
-    const {phone,name,userId} = req.body
-    try{
-      const user = await userModel.findById(userId)
-      if(name && phone){
-        user.name = name
-        user.phone = phone
-        user.save()
+  updateProfile: async (req, res) => {
+    const { phone, name, userId } = req.body;
+    try {
+      const user = await userModel.findById(userId);
+      if (name && phone) {
+        user.name = name;
+        user.phone = phone;
+        user.save();
         res
-        .status(201)
-        .send({ message: "feedback submitted succesfully", success: true });
-      }else{
+          .status(201)
+          .send({ message: "feedback submitted succesfully", success: true });
+      } else {
         res
-      .status(402)
-      .send({ message: "error while upadting profile", success: false });
+          .status(402)
+          .send({ message: "error while upadting profile", success: false });
       }
-    }catch(err){
+    } catch (err) {
       console.log(err);
       res
-      .status(500)
-      .send({ message: "error while upadting profile", success: false });
+        .status(500)
+        .send({ message: "error while upadting profile", success: false });
     }
   },
-  consultationCount:async(req,res)=>{
-    const {userId} = req.body
-    try{
-      const appointments = await appointmentsModel.find({userId})
-      console.log(appointments);
-      const count = appointments.length
-      res
-        .status(201)
-        .send({ message: "appointment count succesfully", success: true ,count});
-    }catch(err){
+  consultationCount: async (req, res) => {
+    const { userId } = req.body;
+    try {
+      const appointments = await appointmentsModel.find({ userId });
+      const count = appointments.length;
+      res.status(201).send({
+        message: "appointment count succesfully",
+        success: true,
+        count,
+      });
+    } catch (err) {
       console.log(err);
-      res
-      .status(500)
-      .send({ message: "error while fetching appointments count", success: false });
+      res.status(500).send({
+        message: "error while fetching appointments count",
+        success: false,
+      });
     }
+  },
+  refetchappntments:(req,res)=>{
+    res.status(200).send({message:'ok'})
   }
 };

@@ -65,8 +65,6 @@ module.exports = {
     }
   },
   newMessage: async (req, res) => {
-    console.log('-------------------------');
-    console.log(req.body);
     const newMessage = new MessageModel(req.body);
     try {
       const savedMessage = await newMessage.save();
@@ -167,7 +165,6 @@ module.exports = {
     }
   },
   getAgoraToken:(req,res)=>{
-    console.log(req.body);
     const {AgoraToken} = req.body
     try{
       res.status(200).send({message:"token fetch succesful",success:true,AgoraToken})
