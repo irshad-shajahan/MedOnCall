@@ -52,6 +52,7 @@ function PreparePrescription({ socket }) {
         }
       })
     }
+    
     // Reset form fields
     setPatientName('');
     setAge('');

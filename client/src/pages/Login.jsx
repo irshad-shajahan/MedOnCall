@@ -151,12 +151,12 @@ const Login = () => {
                   Login
                 </button>
                 <p className="text-sm font-light text-gray-500 dark:text-gray-400">
-                  Already have an account?
+                  Dont have an account?
                   <a
                     href="/register"
                     className="font-medium text-primary-600 hover:underline dark:text-primary-500"
                   >
-                    Regsister here
+                    Register here
                   </a>
                 </p>
                 <div className="text-center flex-col flex text-white">

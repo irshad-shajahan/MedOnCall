@@ -1,14 +1,30 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable no-nested-ternary */
-/* eslint-disable no-underscore-dangle */
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-// import { useCreateSessionMutation } from '../../redux/features/api/apiSlice';
+import { toast } from 'react-toastify';
 
-const AppointmentsList = ({ appointments }) => {
+const AppointmentsList = ({ appointments,socket,refetch }) => {
   function clickHandler( appointmentId) {
+
         navigate('/user/startSession', { state: {appointmentId} })
   }
     const navigate = useNavigate()
+    // useEffect(()=>{
+    //   const sessionStarted = () => {
+    //       toast.info("Your Session Has Started, Join now !", {
+    //           position: toast.POSITION.TOP_CENTER,
+    //           autoClose: 3000,
+    //           hideProgressBar: true,
+    //           draggable: false,
+    //         });
+    //         refetch()
+    //     };   
+    //     socket.current.on('sessionStarted', sessionStarted);
+    //     return () => {
+    //       socket.current.off('sessionStarted', sessionStarted);
+    //     };
+    //   },[])
   return (
     <div className="bg-gray-100 p-4 rounded-lg w-full overflow-y-auto max-h-screen">
       <h2 className="text-lg font-semibold mb-4">Appointments</h2>

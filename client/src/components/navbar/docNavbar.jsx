@@ -38,7 +38,7 @@ function DocNavbar({ children }) {
         <div className="shadow-md w-full fixed top-0 left-0">
           <div className="md:flex items-center justify-between bg-blue-900">
             <div className="font-bold text-2xl cursor-pointer flex items-center font-[poppins] text-white">
-              <span className="text-3xl mr-1 bg-white rounded">
+              <span className="text-3xl mr-1 bg-white rounded" onClick={()=>navigate('/')}>
                 <img src="/logo.png" alt="" className="h-16" />
               </span>
             </div>

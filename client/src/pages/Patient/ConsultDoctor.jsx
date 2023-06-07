@@ -15,7 +15,6 @@ function ConsultDoctor() {
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const { data, isSuccess,isLoading } = useFetchSpecialitiesQuery();
-  console.log(data);
   const user = useSelector((state) => state.user.user);
   const [inputPhone, SetInputPhone] = useState(null)
   const [updatePhone] = useUpdatePhoneMutation()

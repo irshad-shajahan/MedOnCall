@@ -1,12 +1,12 @@
 /* eslint-disable prefer-const */
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-underscore-dangle */
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { groupBy } from 'lodash';
 import { useCreateSessionMutation } from '../../redux/features/api/apiSlice';
 
-const DocAppointmentsList = ({ appointments }) => {
+const DocAppointmentsList = ({ appointments,socket }) => {
   const [createSession, actions] = useCreateSessionMutation()
   const today = new Date();
   const year = today.getFullYear();
@@ -23,11 +23,14 @@ const DocAppointmentsList = ({ appointments }) => {
     }
     if (!actions.isLoading) {
       createSession(data).then(() => {
+        
         navigate('/doctor/startSession', { state: {appointmentId,receiverId: userId} })
       })
     }
   }
-
+function test(userd){
+  socket.current.emit('session-start', { receiverid:userd })
+}
   return (
     <div className="bg-gray-100 p-4 rounded-lg w-full overflow-y-auto max-h-screen">
       <h2 className="text-lg font-semibold mb-4">Appointments</h2>
@@ -63,6 +66,7 @@ const DocAppointmentsList = ({ appointments }) => {
             </p>
           </div>
           <div className="w-[30%]">
+            <button type='button' onClick={()=>test(appointment.userId)}>ddf</button>
             <h5 className="text-red-600 font-semibold text-xl ">
               Time: {appointment.time}
             </h5>

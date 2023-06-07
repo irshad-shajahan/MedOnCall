@@ -45,11 +45,21 @@ module.exports = function (io) {
       }
     })
     socket.on('prescription-done', ({ receiverid }) => {
-      console.log(receiverid);
       const receiver = getReceiver(receiverid)
-      console.log(receiver);
       if (receiver) {
         io.to(receiver?.socketid).emit('getPrescriptionDone')
+      }
+    })
+    socket.on('session-startt', ({ receiverid }) => {
+      const receiver = getReceiver(receiverid)
+      if (receiver) {
+        io.to(receiver?.socketid).emit('session-started')
+      }
+    })
+    socket.on('session-joined', ({ receiverid }) => {
+      const receiver = getReceiver(receiverid)
+      if (receiver) {
+        io.to(receiver?.socketid).emit('session-joinConfirm')
       }
     })
   }); 

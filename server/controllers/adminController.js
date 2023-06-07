@@ -157,7 +157,6 @@ module.exports = {
     }
   },
   paymentPanel: async (req, res) => {
-    console.log("payment panel controller reached");
     try {
    const paymentDocuments = await paymentModel.find()
    const updatedPaymentDocuments = await Promise.all(
@@ -184,7 +183,6 @@ module.exports = {
     }
   },
   approvePayment:async(req,res)=>{
-    console.log(req.body)
     const {documentId,doctorId} = req.body
     try{
       const paymentDoc = await paymentModel.findById(documentId)
