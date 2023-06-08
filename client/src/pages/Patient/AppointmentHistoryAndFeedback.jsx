@@ -11,8 +11,8 @@ import { hideLoading, showloading } from '../../redux/features/alertSlice';
 function AppointmentHistory({ socket }) {
   const dispatch = useDispatch()
   const { data, isSuccess, refetch, isLoading } = usePatientAppointmentsQuery()
-  const appointments = data?.updatedAppointments.filter(appointment => appointment.completed === true)
-  const sortedAppointments = appointments.slice().sort((a, b) => {
+  const appointments = data?.updatedAppointments?.filter(appointment => appointment.completed === true)
+  const sortedAppointments = appointments?.slice()?.sort((a, b) => {
     const aDateTime = new Date(`${a.date} ${a.time}`);
     const bDateTime = new Date(`${b.date} ${b.time}`);
     return bDateTime - aDateTime; // Sort in descending order (recent on top)
