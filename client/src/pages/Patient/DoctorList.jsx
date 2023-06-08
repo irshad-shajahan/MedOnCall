@@ -119,7 +119,7 @@ if(isSuccess){
                 </div>
                   <button
                     type="button"
-                    className="mt-2 bg-blue-500 md:ml-40 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded"
+                    className="mt-2 bg-blue-500 md:ml-36 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded"
                     // eslint-disable-next-line no-underscore-dangle
                     onClick={() => clickHandler(doctor._id)}
                   >
