@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable react/no-array-index-key */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
@@ -26,6 +25,9 @@ function DoctorDetails() {
   const [anotherDate, setAnotherDate] = useState(false);
   const navigate = useNavigate();
   const doctor = data?.doctor
+  const dd = new Date();
+  const maxDate = new Date();
+  maxDate.setDate(dd.getDate() + 30);
   const paymentNavigate = (t) => {
     dispatch(showloading())
     if (anotherDate) {
@@ -49,6 +51,7 @@ function DoctorDetails() {
       }
     } else {
       const today = new Date();
+      maxDate.setDate(today.getDate() + 30);
       const year = today.getFullYear();
       const month = String(today.getMonth() + 1).padStart(2, '0'); // Month index starts from 0, so we add 1
       const day = String(today.getDate()).padStart(2, '0');
@@ -82,28 +85,31 @@ function DoctorDetails() {
   }, [isLoading])
   function disableSlots(value) {
     const checkBooked = doctor?.bookedSlots.find((booking) => booking.date === value);
+    const today = new Date(); // Get the current date and time
+  
     if (checkBooked) {
       const bookedTimeSlots = checkBooked.slots;
       if (bookedTimeSlots?.length !== 0) {
         const updatedTimeSlots = timeSlots.map((elem) => {
           const isBooked = bookedTimeSlots.some((secElem) => elem.time === secElem.time);
+          const isPast = new Date(`${value} ${elem.time}`) < today; // Check if the time slot is in the past
           return {
             ...elem,
-            status: !isBooked, // Update the status based on whether the time slot is booked or not
+            status: !isBooked && !isPast, // Update the status based on whether the time slot is booked or in the past
           };
         });
         setTimeSlots(updatedTimeSlots);
       }
     } else {
-      // No bookings for the date, set all statuses to true
+      // No bookings for the date, set all statuses to true excluding past time slots
       const updatedTimeSlots = timeSlots.map((elem) => ({
         ...elem,
-        status: true,
+        status: new Date(`${value} ${elem.time}`) >= today, // Exclude past time slots
       }));
       setTimeSlots(updatedTimeSlots);
     }
-
   }
+  
 
   const handleValueChange = (value) => {
     disableSlots(value.startDate)
@@ -146,17 +152,16 @@ function DoctorDetails() {
       </div>
     );
   }
-  console.log('ss', timeSlots);
   if (isSuccess) {
     return (
       <div>
         <Navbar>
           <section className=" bg-blueGray-50">
             <div className="container mx-auto">
-              <div className="flex m-8 items-center">
-                <div className=" md:w-[22%] px-12 md:px-4 mr-auto ml-auto">
+              <div className="flex m-8 md:items-center">
+                <div className=" md:w-[22%]  md:px-4 mr-auto ml-auto">
                   <div className=" flex flex-col min-w-0 break-words w-full mb-6 shadow-lg bg-blue-900 rounded-2xl">
-                    <div>
+                    <div className='w-40 md:w-full'>
                       <img
                         alt="..."
                         src={doctor?.additionalDetails.profileImage}
@@ -176,7 +181,7 @@ function DoctorDetails() {
 
                 <div className=" md:w-[30%]">
                   <div className="flex flex-wrap">
-                    <div className="w-[45%] px-4">
+                    <div className="w-[45%] px-4 hidden md:block">
                       <div className=" flex flex-col h-[35%]">
                         <div className="px-4 flex-auto">
                           <div className="text-blueGray-500 p-3 text-center inline-flex items-center justify-center w-12 h-12 mb-5 shadow-lg rounded-full bg-white">
@@ -218,7 +223,7 @@ function DoctorDetails() {
                       </div>
                     </div>
 
-                    <div className="w-full md:w-6/12 px-4">
+                    <div className="w-full md:w-6/12 px-4 md:block hidden">
                       <div className="flex flex-col min-w-0 mt-2">
                         <div className="px-4 py- flex-auto">
                           <div className="text-blueGray-500 p-3 text-center inline-flex items-center justify-center w-12 h-12 mb-5 shadow-lg rounded-full bg-white">
@@ -250,53 +255,82 @@ function DoctorDetails() {
                   </div>
 
                 </div>
-                <div className="w-[50%] px-4 mb-10">
-                  <div className="h-auto mb-5 rounded-lg border-2 border-dashed border-gray-600" onMouseEnter={() => setdivstst(true)}>
+                <div className="md:w-[50%] px-4 mb-10">
+                  <div className="h-auto mb-5 md:w-full w-40 rounded-lg border-2 border-dashed border-gray-600" onMouseEnter={() => setdivstst(true)}>
                     <h5 className="text-lg font-semibold text-center mt-2">
                       SELECT YOUR CONVENIENT SLOT
                     </h5>
-                   {divsts?<div className='transition-all duration-1000 transi'>
-                   <h5 className="font-semibold m-4">
-                      Booking for {' '}
-                      <span
-                        type="button"
-                        onClick={anotherDateHandler}
-                        className="cursor-pointer text-blue-500"
-                      >
+                    {divsts ? <div className='transition-all duration-1000 transi'>
+                      <h5 className="font-semibold m-4">
+                        Booking for {' '}
+                        <span
+                          type="button"
+                          onClick={anotherDateHandler}
+                          className="cursor-pointer text-blue-500"
+                        >
                           another date?
-                      </span>
-                    </h5>
-                    {anotherDate ? (
-                      <div className="flex justify-center p-2 border-b-2 border-double border-gray-500 transition-all duration-700">
-                        {/* <Calender type="date" name="date" onChange={selectDate} /> */}
-                        <Datepicker
-                          asSingle
-                          primaryColor="red"
-                          value={slot}
-                          disabledDates={doctor?.leaveDates}
-                          onChange={handleValueChange}
-                        />
-                      </div>
-                    ) : (
-                      ''
-                    )}
+                        </span>
+                      </h5>
+                      {anotherDate ? (
+                        <div className="flex justify-center p-2 border-b-2 border-double border-gray-500 transition-all duration-700">
+                          {/* <Calender type="date" name="date" onChange={selectDate} /> */}
+                          <Datepicker
+                            asSingle
+                            primaryColor="red"
+                            value={slot}
+                            minDate={new Date()}
+                            maxDate={maxDate}
+                            disabledDates={doctor?.leaveDates}
+                            onChange={handleValueChange}
+                          />
+                        </div>
+                      ) : (
+                        ''
+                      )}
 
-                    <div className="grid mt-3 pb-2 md:grid-cols-3 sm:grid-cols-2 text-center">
-                      {timeSlots?.length > 0
-                        ? timeSlots.map((element, i) =>
-                          !element.status ? (
-                            <div
-                              className="w-20 h-12 ml-12 mt-5 bg-red-100 border-2 border-red-700 rounded flex disabled items-center justify-center"
-                              disabled
-                            >
-                              {element.time}
-                            </div>
-                          ) : (
+                      <div className="grid mt-3 pb-2 md:grid-cols-3 sm:grid-cols-2 text-center">
+                        {timeSlots?.length > 0
+                          ? timeSlots.map((element, i) =>
+                            !element.status ? (
+                              <div
+                                className="w-20 h-12 ml-12 mt-5 bg-red-100 border-2 border-red-700 rounded flex disabled items-center justify-center"
+                                disabled
+                              >
+                                {element.time}
+                              </div>
+                            ) : (
+                              <div
+                                onClick={() => {
+                                  paymentNavigate(element.time);
+                                }}
+                                className="w-20 h-12 ml-12 mt-5 bg-green-100 border-2 border-green-700 rounded flex disabled items-center justify-center hover:bg-slate-500 cursor-pointer"
+                              >
+                                <p
+                                  key={i}
+                                  className={
+                                    element.booked
+                                      ? 'text-red-500'
+                                      : 'text-blue-900'
+                                  }
+                                >
+                                  {element.time}
+                                </p>
+                              </div>
+                            )
+                          )
+                          : doctor?.timeSlots.map((element, i) => (
                             <div
                               onClick={() => {
-                                paymentNavigate(element.time);
+                                navigate('/user/paymentWIndow', {
+                                  state: {
+                                    time: element.time,
+                                    // eslint-disable-next-line no-underscore-dangle
+                                    doctorId: doctor._id,
+                                    sessionDate: slot.startDate,
+                                  },
+                                });
                               }}
-                              className="w-20 h-12 ml-12 mt-5 bg-green-100 border-2 border-green-700 rounded flex disabled items-center justify-center hover:bg-slate-500 cursor-pointer"
+                              className="w-20 h-12 ml-12 mt-5 bg-green-100 border-2 border-green-700 rounded flex items-center justify-center hover:bg-slate-500 cursor-pointer"
                             >
                               <p
                                 key={i}
@@ -309,36 +343,9 @@ function DoctorDetails() {
                                 {element.time}
                               </p>
                             </div>
-                          )
-                        )
-                        : doctor?.timeSlots.map((element, i) => (
-                          <div
-                            onClick={() => {
-                              navigate('/user/paymentWIndow', {
-                                state: {
-                                  time: element.time,
-                                  // eslint-disable-next-line no-underscore-dangle
-                                  doctorId: doctor._id,
-                                  sessionDate: slot.startDate,
-                                },
-                              });
-                            }}
-                            className="w-20 h-12 ml-12 mt-5 bg-green-100 border-2 border-green-700 rounded flex items-center justify-center hover:bg-slate-500 cursor-pointer"
-                          >
-                            <p
-                              key={i}
-                              className={
-                                element.booked
-                                  ? 'text-red-500'
-                                  : 'text-blue-900'
-                              }
-                            >
-                              {element.time}
-                            </p>
-                          </div>
-                        ))}
-                    </div>
-                   </div>:''}
+                          ))}
+                      </div>
+                    </div> : ''}
                   </div>
                 </div>
               </div>
@@ -349,7 +356,6 @@ function DoctorDetails() {
                     const ratingValue = index + 1;
 
                     return (
-                      // <label key={ratingValue}>
                       <FaStar
                         className="star text-xl"
                         color={
@@ -358,7 +364,6 @@ function DoctorDetails() {
                             : '#e4e5e9'
                         }
                       />
-                      // </label>
                     );
                   })}
                 </div>

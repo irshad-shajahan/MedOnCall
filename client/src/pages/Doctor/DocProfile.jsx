@@ -37,7 +37,7 @@ function DocProfile() {
     <div>
     <DocNavbar>
       <div className="container mx-auto mt-8">
-        <div className="max-w-4xl mx-auto mt-20 bg-white shadow-lg p-8 rounded-md">
+        <div className="max-w-full bg-white shadow-lg p-8 rounded-md">
           <div className="flex items-center mb-4">
             <img
               className="w-12 h-12 rounded-full mr-4"
@@ -51,16 +51,16 @@ function DocProfile() {
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
-            <div className="bg-blue-100 p-4 rounded-md">
+            <div className="bg-blue-100 p-4 rounded-md text-center">
               <h3 className="text-lg font-semibold mb-2">Total Appointments</h3>
               <p className="text-2xl">{doctor?.wallet.totalAppointments}</p>
             </div>
-            <div className="bg-yellow-100 p-4 rounded-md">
+            <div className="bg-yellow-100 p-4 rounded-md text-center">
               <h3 className="text-lg font-semibold mb-2">Pending Amount</h3>
               <p className="text-2xl">₹ {doctor?.wallet.DueAmount} /-</p>
               <p className="text-sm font-extralight">(due {month})</p>
             </div>
-            <div className="bg-green-100 p-4 rounded-md">
+            <div className="bg-green-100 p-4 rounded-md text-center">
               <h3 className="text-lg font-semibold mb-2">Wallet Balance</h3>
               <p className="text-2xl">₹ {doctor?.wallet.CurrentBalance} /-</p>
             </div>

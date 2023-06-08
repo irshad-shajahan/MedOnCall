@@ -11,7 +11,7 @@ const DocAppointmentsHistory = ({ appointments }) => {
   const day = String(today.getDate()).padStart(2, '0');
   const formattedDate = `${year}-${month}-${day}`;
   const groupedAppointments = groupBy(appointments, 'date');
-  const sortedDates = Object.keys(groupedAppointments).sort();
+  const sortedDates = Object.keys(groupedAppointments).sort((a, b) => new Date(b) - new Date(a));
   const navigate = useNavigate()
   function addPrescription(appointmentId,receiverid){
     navigate('/doctor/preparePrescription',{state:{appointmentId,receiverid}})

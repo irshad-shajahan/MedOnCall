@@ -5,30 +5,52 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 const AppointmentsList = ({ appointments,socket,refetch }) => {
+  const sortedAppointments = appointments.slice().sort((a, b) => {
+    // Move completed appointments to the bottom
+    if (a.completed && !b.completed) {
+      return 1;
+    }
+    if (!a.completed && b.completed) {
+      return -1;
+    }
+
+    // Move active appointments to the top regardless of date and time
+    if (a.active && !b.active) {
+      return -1;
+    }
+    if (!a.active && b.active) {
+      return 1;
+    }
+
+    // Sort by date and time for non-active appointments
+    const aDateTime = new Date(`${a.date} ${a.time}`);
+    const bDateTime = new Date(`${b.date} ${b.time}`);
+    return aDateTime - bDateTime; // Sort in descending order (recent on top)
+  });
   function clickHandler( appointmentId) {
 
         navigate('/user/startSession', { state: {appointmentId} })
   }
     const navigate = useNavigate()
-    // useEffect(()=>{
-    //   const sessionStarted = () => {
-    //       toast.info("Your Session Has Started, Join now !", {
-    //           position: toast.POSITION.TOP_CENTER,
-    //           autoClose: 3000,
-    //           hideProgressBar: true,
-    //           draggable: false,
-    //         });
-    //         refetch()
-    //     };   
-    //     socket.current.on('sessionStarted', sessionStarted);
-    //     return () => {
-    //       socket.current.off('sessionStarted', sessionStarted);
-    //     };
-    //   },[])
+    useEffect(()=>{
+      const sessionStarted = () => {
+          toast.info("Your Session Has Started, Join now !", {
+              position: toast.POSITION.TOP_CENTER,
+              autoClose: 3000,
+              hideProgressBar: true,
+              draggable: false,
+            });
+            refetch()
+        };   
+        socket.current.on('session-started', sessionStarted);
+        return () => {
+          socket.current.off('session-started', sessionStarted);
+        };
+      },[])
   return (
     <div className="bg-gray-100 p-4 rounded-lg w-full overflow-y-auto max-h-screen">
       <h2 className="text-lg font-semibold mb-4">Appointments</h2>
-      {appointments?.map((appointment) => (
+      {sortedAppointments?.map((appointment) => (
         
        <div>
         {appointment.active?(<div className='bg-green-500 rounded-t-md'><p className='font-semibold text-white text-center'>Active Session</p></div>):''}

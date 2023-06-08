@@ -1,14 +1,15 @@
-/* eslint-disable react/self-closing-comp */
 import React, { useEffect, useRef, useState } from 'react'
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useFetchMessagesQuery, useSendMessageMutation } from '../../redux/features/api/apiSlice'
 import Message from './Message';
+import { hideLoading, showloading } from '../../redux/features/alertSlice';
 
 function Chat({ currentChat, socket }) {
-    const { data, isSuccess,refetch } = useFetchMessagesQuery(currentChat?._id)
+    const { data, isSuccess,refetch, isLoading} = useFetchMessagesQuery(currentChat?._id)
     const User = useSelector((state) => state.user.user)
     const [newMessage, setNewMessage] = useState('')
     const [sendMessage, actions] = useSendMessageMutation()
+    const dispatch = useDispatch()
     const scrollRef = useRef()
 
     useEffect(() => {
@@ -39,8 +40,12 @@ function Chat({ currentChat, socket }) {
         }
         setNewMessage('')
     }
-
-   
+    
+   if(isLoading){
+    dispatch(showloading())
+   }else{
+    dispatch(hideLoading())
+   }
     useEffect(() => {
         scrollRef.current?.scrollIntoView({ behavior: "smooth" })
     }, [data])

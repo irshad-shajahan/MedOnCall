@@ -23,14 +23,13 @@ const DocAppointmentsList = ({ appointments,socket }) => {
     }
     if (!actions.isLoading) {
       createSession(data).then(() => {
+        socket.current.emit('session-startt', { receiverid:userId })
         
         navigate('/doctor/startSession', { state: {appointmentId,receiverId: userId} })
       })
     }
   }
-function test(userd){
-  socket.current.emit('session-start', { receiverid:userd })
-}
+
   return (
     <div className="bg-gray-100 p-4 rounded-lg w-full overflow-y-auto max-h-screen">
       <h2 className="text-lg font-semibold mb-4">Appointments</h2>
@@ -66,7 +65,6 @@ function test(userd){
             </p>
           </div>
           <div className="w-[30%]">
-            <button type='button' onClick={()=>test(appointment.userId)}>ddf</button>
             <h5 className="text-red-600 font-semibold text-xl ">
               Time: {appointment.time}
             </h5>

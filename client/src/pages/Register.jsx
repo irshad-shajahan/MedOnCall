@@ -6,6 +6,7 @@ import React, { useState } from 'react';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import imageUrl from '../assets/logo.png'
 import { onSignInSubmit } from '../firebaseConfigFile';
 import {
   validatePhone,
@@ -95,7 +96,7 @@ function Register() {
           >
             <img
               className="w-auto h-24 mr-2"
-              src="./src/assets/logo.png"
+              src={imageUrl}
               alt="logo"
             />
           </a>

@@ -12,6 +12,11 @@ function AppointmentHistory({ socket }) {
   const dispatch = useDispatch()
   const { data, isSuccess, refetch, isLoading } = usePatientAppointmentsQuery()
   const appointments = data?.updatedAppointments.filter(appointment => appointment.completed === true)
+  const sortedAppointments = appointments.slice().sort((a, b) => {
+    const aDateTime = new Date(`${a.date} ${a.time}`);
+    const bDateTime = new Date(`${b.date} ${b.time}`);
+    return bDateTime - aDateTime; // Sort in descending order (recent on top)
+  });
   if (!isSuccess && !isLoading) {
     return <WentWrong />
   }
@@ -28,7 +33,7 @@ function AppointmentHistory({ socket }) {
           <div className='flex'>
             <SideBar active={2} />
             <div className='flex w-3/4 justify-center m-5'>
-              <UserAppointmentRecords refetch={refetch} socket={socket} appointments={appointments} />
+              <UserAppointmentRecords refetch={refetch} socket={socket} appointments={sortedAppointments} />
             </div>
           </div>
         </Navbar>

@@ -10,7 +10,6 @@ import VideoSessionRight from '../../components/sessionScreen/VideoSessionRight'
 
 function VideoCall({socket}) {
     const location = useLocation();
-    console.log(location.state);
   const {appointmentId,receiverId} = location.state;
     const [currentChat, setcurrentChat] = useState(null)
     const Convs = useFetchConversationQuery()

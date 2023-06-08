@@ -9,6 +9,7 @@ import { useDispatch } from 'react-redux';
 import { auth, provider } from '../firebaseConfigFile';
 import { validatePhone } from '../components/validations';
 import { useUserGoogleLoginMutation, useUserLoginMutation } from '../redux/features/api/apiSlice';
+import imageUrl from '../assets/logo.png'
 import { hideLoading, showloading } from '../redux/features/alertSlice';
 import { setUser } from '../redux/features/userSlice';
 
@@ -44,14 +45,12 @@ const Login = () => {
                   isProfileComplete:res.data.response.isProfileComplete,
                   isVerified:res.data.response.isVerified
                 }
-                console.log(loc);
                 localStorage.setItem("check",JSON.stringify(loc))
                navigate('/doctor')
               }else{
                 const nodoctor = {
                   isDoctor:false
                 }
-                console.log(nodoctor);
                 localStorage.setItem("check",JSON.stringify(nodoctor))
                 navigate('/')
               }
@@ -75,7 +74,6 @@ const Login = () => {
         profilePhoto: data.user.photoURL,
       };
       if (data.user.emailVerified) {
-        // postForm('/googleRegister', userData).then((res) => {
           verifyGoogleLogin(userData).then((res)=>{
           if (res.data.success) {
             toast('login succesfull');
@@ -99,7 +97,7 @@ const Login = () => {
           >
             <img
               className="w-auto h-24 mr-2"
-              src="./src/assets/logo.png"
+              src={imageUrl}
               alt="logo"
             />
           </a>
