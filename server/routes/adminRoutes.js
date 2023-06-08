@@ -1,5 +1,5 @@
 const express = require('express');
-const { loginController, userPanel, doctorpanel, doctorDetails, doctorVerify, userCount, addSpeciality, getSpecialities, deleteSpeciality, paymentPanel, approvePayment } = require('../controllers/adminController');
+const { loginController, userPanel, doctorpanel, doctorDetails, doctorVerify, userCount, addSpeciality, getSpecialities, deleteSpeciality, paymentPanel, approvePayment, popularDoctor, appointmentsRate, totalRevenue } = require('../controllers/adminController');
 const authMiddleware = require('../middlewares/authMiddleware');
 const {getImage} = require('../multer')
 const router = express.Router();
@@ -16,5 +16,8 @@ router.get('/getSpeciality',authMiddleware,getSpecialities)
 router.get('/deleteSpeciality/:id',authMiddleware,deleteSpeciality)
 router.get('/paymentPanel',authMiddleware,paymentPanel)
 router.post('/approvePayment',authMiddleware,approvePayment)
+router.get('/getPopDoc',authMiddleware,popularDoctor)
+router.get('/getappntmntRate',authMiddleware,appointmentsRate)
+router.get('/totalrevenue',authMiddleware,totalRevenue)
 
 module.exports =router;

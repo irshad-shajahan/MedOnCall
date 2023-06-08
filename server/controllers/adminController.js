@@ -9,6 +9,7 @@ const doctormdel = require("../models/doctorModel");
 const doctorModel = require("../models/doctorModel");
 const specialityModel = require("../models/specialityModel");
 const paymentModel = require("../models/PaymentModel");
+const appointmentsModel = require("../models/appointmentsModel");
 module.exports = {
   loginController: (req, res) => {
     const data = req.body;
@@ -212,6 +213,89 @@ module.exports = {
     }catch(err){
       console.log(err);
       res.status(500).send({message:"error while approving payment",success:false})
+    }
+  },
+  popularDoctor:async(req,res)=>{
+    try {
+      const popularDoctorsQuery = [
+        {
+          $match: {
+            "bookedSlots.slots": { $exists: true, $type: "array" }
+          }
+        },
+        {
+          $project: {
+            name: 1,
+            appointmentCount: { $size: "$bookedSlots.slots" }
+          }
+        },
+        { $sort: { appointmentCount: -1 } },
+        { $limit: 3 }
+      ];
+  
+      const popularDoctors = await doctorModel.aggregate(popularDoctorsQuery);
+  
+      res.status(200).send({
+        success: true,
+        message: "Popular doctors fetched successfully",
+        popularDoctors
+      });
+    } catch (error) {
+      console.error("Error fetching popular doctors:", error);
+      res.status(500).send({
+        success: false,
+        message: "Error fetching popular doctors",
+        error
+      });
+    }
+  },
+  appointmentsRate:async(req,res)=>{
+    try {
+      const monthlyAppointments = await appointmentsModel.aggregate([
+        {
+          $group: {
+            _id: {
+              $dateToString: {
+                format: '%Y-%m',
+                date: { $toDate: '$date' }
+              }
+            },
+            count: { $sum: 1 }
+          }
+        },
+        {
+          $sort: {
+            _id: 1
+          }
+        }
+      ]);
+  
+      res.send(monthlyAppointments);
+    } catch (error) {
+      console.error('Error fetching appointment numbers:', error);
+      res.status(500).send({ error: 'Failed to fetch appointment numbers' });
+    }
+  },
+  totalRevenue:async(req,res)=>{
+    try {
+      const result = await paymentModel.aggregate([
+        {
+          $group: {
+            _id: null,
+            totalRevenue: { $sum: '$TotalCommissionEarned' },
+          },
+        },
+      ]);
+  
+      if (result.length > 0) {
+        const totalRevenue = result[0].totalRevenue;
+        res.status(200).send({ totalRevenue });
+      } else {
+        res.status(404).send({ message: 'No payment records found' });
+      }
+    } catch (error) {
+      console.error('Error finding total revenue:', error);
+      res.status(500).send({ message: 'Internal server error' });
     }
   }
 };

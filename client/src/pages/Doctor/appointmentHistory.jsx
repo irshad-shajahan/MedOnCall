@@ -9,7 +9,7 @@ import { hideLoading, showloading } from '../../redux/features/alertSlice'
 function AppointmentsHistory() {
   const dispatch = useDispatch()
     const {data,isLoading,isSuccess} = useFetchDoctorAppointmentsQuery()
-    const appointments = data?.appointments.filter(appointment => appointment.completed===true)
+    const appointments = data?.appointments.filter(appointment => appointment.completed === true)
     if (!isSuccess && !isLoading) {
       return <WentWrong />
     }
@@ -18,6 +18,7 @@ function AppointmentsHistory() {
     } else {
       dispatch(hideLoading())
     }
+if(isSuccess){
   return (
     <div>
     <DocNavbar>
@@ -29,6 +30,7 @@ function AppointmentsHistory() {
     </DocNavbar>
 </div>
   )
+}
 }
 
 export default AppointmentsHistory

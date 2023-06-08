@@ -6,7 +6,6 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   ChatAltIcon,
-  CogIcon,
   LogoutIcon,
   ShoppingCartIcon,
   TemplateIcon,
@@ -46,13 +45,7 @@ const navElements = [
     title: 'Manage Speciality',
     icon: <ChatAltIcon className="w-6 h-6 cursor-pointer" />,
     route: '/manage',
-  },
-  {
-    id: 5,
-    title: 'Settings',
-    icon: <CogIcon className="w-6 h-6 cursor-pointer" />,
-    route: '/',
-  },
+  }
 ];
 
 function NavBar() {

@@ -11,18 +11,12 @@ const navElements = [
   },
   {
     id: 1,
-    title: 'Profile',
-    icon:<ion-icon name="person"/>,
-    route: '/doctor/profile',
-  },
-  {
-    id: 2,
     title: 'Availability',
     icon:<ion-icon name="checkmark-done"/>,
     route: '/doctor/availability',
   },
   {
-    id: 3,
+    id: 2,
     title: 'Appointments',
     icon:<ion-icon name="chatbubbles"/>,
     route: '/doctor/appointments',

@@ -253,7 +253,6 @@ module.exports = {
     try {
       const appointments = await appointmentsModel
         .find({ userId: userId })
-        .sort({ createdAt: -1 });
       const updatedAppointments = await Promise.all(
         appointments.map(async (elem) => {
           const doctor = await doctorModel.findById(elem.DoctorId);

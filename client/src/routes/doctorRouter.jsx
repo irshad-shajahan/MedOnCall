@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import DocHome from '../pages/Doctor/DocHome';
 import DocProfile from '../pages/Doctor/DocProfile';
 import Availability from '../pages/Doctor/Availability';
 import Appointments from '../pages/Doctor/Appointments';
@@ -31,8 +30,7 @@ function DoctorRouter({socket}) {
 
   return (
     <Routes>
-      <Route path="/" element={<DocHome />} />
-      <Route path="/profile" element={<DocProfile />} />
+      <Route path="/" element={<DocProfile />} />
       <Route path="/availability" element={<Availability />} />
       <Route path="/appointments" element={<Appointments socket={socket}/>} />
       <Route path="/appointmentHistory" element={<AppointmentsHistory />} />

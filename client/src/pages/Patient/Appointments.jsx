@@ -19,6 +19,7 @@ function Appointments({socket}) {
       if(!isSuccess && !isLoading){
         return <WentWrong />
       }
+if(isSuccess){
   return (
     <div>
         <Navbar>
@@ -31,6 +32,7 @@ function Appointments({socket}) {
         </Navbar>
     </div>
   )
+}
 }
 
 export default Appointments
