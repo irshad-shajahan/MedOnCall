@@ -1,7 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useFetchSecondUserQuery, useGetUserDetailsQuery } from '../../redux/features/api/apiSlice';
 import { hideLoading, showloading } from '../../redux/features/alertSlice';
 
@@ -25,7 +25,7 @@ function SessionLeft({setcurrentChat,active}) {
     }
 if(isSuccess){
     return (
-        <div className="flex flex-col py-8 pl-6  w-64 bg-blue-100 md:pr-10 flex-shrink-0">
+        <div className=" flex-col py-8 pl-6  w-64 bg-blue-100 md:pr-10 flex-shrink-0 md:flex hidden">
             <div className="flex flex-row items-center justify-center h-12 w-full">
                 <div className='w-32 mr-2 bg-blue-200 rounded-lg mb-4'>
                     <img src="/logo.png" alt="logo" />

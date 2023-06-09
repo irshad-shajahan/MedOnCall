@@ -156,11 +156,11 @@ useEffect(()=>{
     
   return (
     <div className="w-3/12  h-screen items-center border-l-2 border-gray-300 rounded-md scroll-container ">
-      <div className='h-10 bg-blue-400 rounded-md flex justify-center mt-[1px] items-center'>
+      <div className='h-10 bg-blue-400 rounded-md md:flex hidden justify-center mt-[1px] items-center'>
         <h5 className='font-semibold text-base text-white'>Logged in as : {User?.name}</h5>
       </div>
       <div className="flex flex-col h-2/4 bg-white mx-2 items-center mb-4 justify-center">
-        <div className="justify-center items-center h- hidden md:flex">
+        <div className="justify-center items-center hidden md:flex">
           <Carousel
             showThumbs={false}
             showArrows={false}
@@ -196,12 +196,12 @@ useEffect(()=>{
       </div>
       <div className='justify-center flex flex-col items-center h-1/4'>
         <div className='m-5 justify-center flex flex-col'>
-          <h5 className='font-semibold mb-1'>Request Video Call</h5>
+          <h5 className='font-semibold mb-1 md:block hidden'>Request Video Call</h5>
           {showTimer?(<p className='font-semibold text-red-500'>You will be redirected in {timerCount}</p>):null}
           <button type='button' onClick={requestVideoCall} className='bg-blue-900 p-2 font-bold text-2xl text-white rounded-lg hover:bg-indigo-500 duration-700'> <ion-icon name="videocam"/></button>
         </div>
         <div className='justify-center flex flex-col'>
-          <button type='button' onClick={endSessionhandler} className='bg-red-500 p-2 flex font-semibold text-white rounded-lg hover:bg-orange-500 duration-700'><span className='flex items-center mt-1 mr-2'><ion-icon name="close-circle-outline"/></span> End Session</button>
+          <button type='button' onClick={endSessionhandler} className='bg-red-500 p-2 flex font-semibold text-white rounded-lg hover:bg-orange-500 duration-700'><span className='flex items-center mt-1 mr-2'><ion-icon name="call-outline"/></span><span className='hidden md:block'> End Session</span></button>
         </div>
       </div>
     </div>
