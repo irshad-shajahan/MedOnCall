@@ -35,8 +35,7 @@ module.exports = {
           doctorId
         },
         mode: "payment",
-        success_url: "http://localhost:3000/user/success",
-        // success_url: "https://medoncall.online/user/success",
+        success_url: "https://medoncall.online/user/success",
         cancel_url: "https://medoncall.online/user/cancel",
       });
       req.session.verifyid = session.id;
