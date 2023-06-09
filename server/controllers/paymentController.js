@@ -3,6 +3,7 @@ const paymentModel = require("../models/PaymentModel");
 const appointmentsModel = require("../models/appointmentsModel");
 const doctorModel = require("../models/doctorModel");
 const userModel = require("../models/userModels");
+const { initiatePayment } = require("./userController");
 
 require("dotenv").config();
 const stripe = require("stripe")(process.env.STRIPE_KEY);
@@ -34,7 +35,8 @@ module.exports = {
           doctorId
         },
         mode: "payment",
-        success_url: "https://medoncall.online/user/success",
+        success_url: "http://localhost:3000/user/success",
+        // success_url: "https://medoncall.online/user/success",
         cancel_url: "https://medoncall.online/user/cancel",
       });
       req.session.verifyid = session.id;
@@ -53,47 +55,15 @@ module.exports = {
         .send({ message: "error occurred at payment", success: false });
     }
   },
-  initiatePayment: async (doctorId) => {
-    try {
-      const doctor = await doctorModel.findById(doctorId);
-      const doctorPayment = await paymentModel.findOne({ doctorId });
-      const appointments = await appointmentsModel.find({ DoctorId: doctorId });
-      const commission = Math.round(doctor.additionalDetails.Fee * 0.07);
-      const newPendingPayement = doctor.additionalDetails.Fee - commission;
-      if (doctorPayment) {
-        doctorPayment.CurrentFee = doctor.additionalDetails.Fee;
-        doctorPayment.TotalAppointments = appointments.length;
-        doctorPayment.TotalCommissionEarned += commission;
-        doctorPayment.PendingPayment += newPendingPayement;
-        await doctorPayment.save();
-        doctor.wallet.totalAppointments = doctorPayment.TotalAppointments;
-        doctor.wallet.DueAmount = doctorPayment.PendingPayment;
-        await doctor.save();
-      } else {
-        const paymentData = {
-          doctorId,
-          CurrentFee: doctor.additionalDetails.Fee,
-          TotalAppointments: appointments.length,
-          TotalCommissionEarned: commission,
-          PendingPayment: newPendingPayement,
-        };
-        const paymentDoc = new paymentModel(paymentData);
-        await paymentDoc.save();
-        doctor.wallet.DueAmount += newPendingPayement;
-        await doctor.save();
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  },
   ConfirmBooking: async (req, res) => {
     const { userId } = req.body;
     const payData = getPayment(userId);
-    const updatedSession = await stripe.checkout.sessions.retrieve(payData?.paymentId);
-    const {time,sessionDate,doctorId} = updatedSession.metadata;
     
     try {
-      if (updatedSession.payment_status == "paid"){     
+      const updatedSession = await stripe.checkout.sessions.retrieve(payData?.paymentId);
+      const {time,sessionDate,doctorId} = updatedSession.metadata;
+      if (updatedSession.payment_status == "paid"){
+        const intePayment = await initiatePayment(doctorId)     
         const patient = await userModel.findById(userId);
         const doctor = await doctorModel.findById(doctorId);
         const data = {
@@ -113,25 +83,19 @@ module.exports = {
           return appointmentData._id
         }
         if (doctor.bookedSlots.length > 0) {
-          console.log('entered lenght greater condition');
           const matchedDate = doctor.bookedSlots.find(
             (slot) => slot.date === sessionDate
           );
           if (matchedDate) {
-            console.log('entered match date');
-            console.log('match date:',matchedDate);
             const matchedTime = matchedDate.slots.find(
               (slot) => slot.time === time
             );
             if (matchedTime) {
-              console.log('entered matched time');
-              console.log('matched time:',matchedTime)
               res.status(200).send({
                 message: "The Slot is already booked",
                 success: false,
               });
             } else {
-              console.log('entered matched time else');
               const AppointmentId = await addAppointment();
               const timeSlot = {
                 time: time,

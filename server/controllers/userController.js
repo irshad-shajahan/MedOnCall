@@ -14,8 +14,7 @@ const {
   generateFooter,
   DiagnosedCondition,
 } = require("../middlewares/pdfFuntions");
-const { initiatePayment } = require("./paymentController");
-const { getPayment } = require("../listeners/PaymentListner");
+const paymentModel = require("../models/PaymentModel");
 module.exports = {
   registerController: async (req, res) => {
     const data = req.body;
@@ -390,5 +389,38 @@ module.exports = {
   },
   refetchappntments:(req,res)=>{
     res.status(200).send({message:'ok'})
-  }
+  },
+  initiatePayment: async (doctorId) => {
+    try {
+      const doctor = await doctorModel.findById(doctorId);
+      const doctorPayment = await paymentModel.findOne({ doctorId });
+      const appointments = await appointmentsModel.find({ DoctorId: doctorId });
+      const commission = Math.round(doctor.additionalDetails.Fee * 0.07);
+      const newPendingPayement = doctor.additionalDetails.Fee - commission;
+      if (doctorPayment) {
+        doctorPayment.CurrentFee = doctor.additionalDetails.Fee;
+        doctorPayment.TotalAppointments = appointments.length;
+        doctorPayment.TotalCommissionEarned += commission;
+        doctorPayment.PendingPayment += newPendingPayement;
+        await doctorPayment.save();
+        doctor.wallet.totalAppointments = doctorPayment.TotalAppointments;
+        doctor.wallet.DueAmount = doctorPayment.PendingPayment;
+        await doctor.save();
+      } else {
+        const paymentData = {
+          doctorId,
+          CurrentFee: doctor.additionalDetails.Fee,
+          TotalAppointments: appointments.length,
+          TotalCommissionEarned: commission,
+          PendingPayment: newPendingPayement,
+        };
+        const paymentDoc = new paymentModel(paymentData);
+        await paymentDoc.save();
+        doctor.wallet.DueAmount += newPendingPayement;
+        await doctor.save();
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  },
 };
