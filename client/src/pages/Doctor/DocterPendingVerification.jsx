@@ -3,6 +3,7 @@ import { TypeAnimation } from 'react-type-animation';
 import {  useNavigate } from 'react-router-dom';
 import Navbar from '../../components/navbar/navbar';
 import { useGetUserDetailsQuery } from '../../redux/features/api/apiSlice';
+import imageUrl from '../../assets/verifypending.png'
 
 function DocterPendingVerification() {
   const navigate = useNavigate();
@@ -21,7 +22,7 @@ function DocterPendingVerification() {
         <div className="max-w-lg rounded overflow-hidden ">
           {/* <div className='w'> */}
           <img
-            src="/src/assets/verifypending.png"
+            src={imageUrl}
             className="mx-auto w-48"
             alt="Sunset in the mountains"
           />
