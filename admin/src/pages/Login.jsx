@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import {useNavigate} from 'react-router-dom'
 import { toast } from 'react-toastify';
 import axios from '../axios/axios';
+import imageUrl from '../assets/logo.png'
 
 const Login = () => {
   const navigate = useNavigate()
@@ -46,7 +47,7 @@ const Login = () => {
         >
           <img
             className="w-auto h-24 mr-2"
-            src="./src/assets/logo.png"
+            src={imageUrl}
             alt="logo"
           />
         </a>

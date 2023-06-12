@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { verify } from '../firebaseConfigFile';
 import { postForm } from '../axios/apiCalls';
+import imageUrl from '../assets/logo.png'
 
 function OtpInput() {
   const location = useLocation();
@@ -66,7 +67,7 @@ function OtpInput() {
           >
             <img
               className="w-auto h-24 mr-2"
-              src="./src/assets/logo.png"
+              src={imageUrl}
               alt="logo"
             />
           </a>
