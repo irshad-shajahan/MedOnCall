@@ -51,6 +51,7 @@ const Login = () => {
                 const nodoctor = {
                   isDoctor:false
                 }
+                
                 localStorage.setItem("check",JSON.stringify(nodoctor))
                 navigate('/')
               }
